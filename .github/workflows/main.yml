@@ -14,25 +14,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # - id: 'auth'
-      #   uses: 'google-github-actions/auth@v2'
-      #   with:
-      #     service_account_key: ${{ secrets.GCP_SA_KEY }}
-      #     project_id: ${{ secrets.GCP_PROJECT_ID }}
-
-      - name: 'Set up Cloud SDK'
-        uses: 'google-github-actions/setup-gcloud@v2'
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
         with:
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
-
-      - name: Get the commit SHA
-        id: vars
-        run: echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+      - name: Authenticate to Google Cloud
+        run: echo '${{ secrets.GCP_SA_KEY }}' | gcloud auth activate-service-account --key-file=-
 
       - name: Configure Docker to use the gcloud command-line tool as a credential helper
         run: gcloud auth configure-docker ${{ secrets.REGION }}-docker.pkg.dev
+
+      - name: Get the commit SHA
+        run: echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
       - name: Build and Push Docker image to Artifact Registry
         run: |
@@ -48,8 +42,10 @@ jobs:
       - name: Set up Google Cloud
         uses: google-github-actions/setup-gcloud@v2
         with:
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
           project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Authenticate to Google Cloud
+        run: echo '${{ secrets.GCP_SA_KEY }}' | gcloud auth activate-service-account --key-file=-
 
       - name: Install gke-gcloud-auth-plugin
         run: gcloud components install gke-gcloud-auth-plugin --quiet
@@ -62,23 +58,3 @@ jobs:
         run: |
           IMAGE_URI="${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.REPOSITORY_NAME }}/iot-esg-app:${{ env.sha }}"
           kubectl set image deployment/iot-esg-app-deployment iot-esg-container=$IMAGE_URI
-
-  # deploy:
-  #   name: Deploy to GKE
-  #   needs: setup-build-push
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Set up Google Cloud
-  #       uses: google-github-actions/setup-gcloud@v0.2.0
-  #       with:
-  #         service_account_key: ${{ secrets.GCP_SA_KEY }}
-  #         project_id: ${{ secrets.GCP_PROJECT_ID }}
-
-  #     - name: Configure kubectl
-  #       run: |
-  #         gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER }} --region ${{ secrets.REGION }}
-
-  #     - name: Deploy to GKE
-  #       run: |
-  #         IMAGE_URI="${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.REPOSITORY_NAME }}/iot-esg-app:${{ steps.vars.outputs.sha }}"
-  #         kubectl set image deployment/iot-esg-app-deployment iot-esg-container=$IMAGE_URI
