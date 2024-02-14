@@ -1,0 +1,50 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: iot-esg-app-ingress
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    kubernetes.io/ingress.global-static-ip-name: iot-esg-app-ip-name
+spec:
+  defaultBackend:
+    service:
+      name: iot-esg-app-service
+      port:
+        number: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: iot-esg-app-service
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 3000
+  selector:
+    app: iot-esg-app
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iot-esg-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: iot-esg-app
+  template:
+    metadata:
+      labels:
+        app: iot-esg-app
+    spec:
+      containers:
+      - name: iot-esg-app
+        image: gcr.io/GOOGLE_PROJECT/iot-esg-app:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: ENV_VAR_NAME
+          value: "Your Value Here"
+        # Define other environment variables as needed
