@@ -14,6 +14,7 @@ export const getSession = async () => {
 
   return session;
 };
+
 export const login = async () => {
   const redirectUri = encodeURIComponent(
     `${process.env.NEXT_PUBLIC_YGGIO_REDIRECT_URI}`,
@@ -26,8 +27,32 @@ export const login = async () => {
   redirect(url);
 };
 
+export const get = async () => {};
+
 export const logout = async () => {
   const session = await getSession();
   session.destroy();
   redirect("/");
 };
+
+export const getNodes = async (token: string) => {
+  const response = await fetch("https://staging.yggio.net/api/iotnodes", {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+  const nodes = await response.json();
+  return nodes;
+};
+
+// export const getTemp = async (id: string, measurement: string) => {
+//   const response = await fetch(
+//     `https://staging.yggio.net/api/iotnodes/${id}/stats?measurement=${measurement}`,
+//   );
+
+//   const data = await response.json();
+
+//   return data;
+// };

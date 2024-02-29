@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
 import "./globals.css";
-import { NavBar } from "@/components/navbar";
+import { NavBar } from "@/components/nav/navbar";
 
 export const metadata: Metadata = {
   title: "Sensative web-app",
