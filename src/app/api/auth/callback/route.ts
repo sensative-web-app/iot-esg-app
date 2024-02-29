@@ -40,5 +40,10 @@ export async function GET(request: NextRequest) {
   }
 
   await session.save();
-  return Response.redirect("http://localhost:3000/");
+  const redirectUrl =
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:3000"
+      : `https://${process.env.VERCEL_URL}`;
+
+  return Response.redirect(redirectUrl);
 }
