@@ -1,15 +1,56 @@
 "use server";
 
 import { SessionData, sessionOptions, defaultSession } from "./lib/session";
-import { getIronSession } from "iron-session";
+import { IronSession, getIronSession } from "iron-session";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+
+export const get = async () => {};
 
 export const getSession = async () => {
   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
 
   if (!session.isLoggedIn) {
     session.isLoggedIn = defaultSession.isLoggedIn;
+  }
+
+  return session;
+};
+
+export const refreshTokenIfNecessary = async (
+  session: IronSession<SessionData>,
+) => {
+  const now = Date.now();
+  let expires;
+
+  if (session !== undefined) {
+    expires = session?.expires!.getTime();
+    if (now >= expires) {
+      const response = await fetch(
+        "https://staging.yggio.net/auth/realms/yggio/protocol/openid-connect/token",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            grant_type: "refresh_token",
+            refresh_token: session.refreshToken!,
+            client_id: process.env.NEXT_PUBLIC_YGGIO_CLIENT_ID!,
+            client_secret: process.env.YGGIO_CLIENT_SECRET!,
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      session.accessToken = data.access_token;
+      session.refreshToken = data.refresh_token;
+      const expiresInMs = data.expires_in * 1000;
+      session.expires = new Date(new Date().getTime() + expiresInMs);
+
+      await session.save();
+    }
   }
 
   return session;
@@ -26,8 +67,6 @@ export const login = async () => {
 
   redirect(url);
 };
-
-export const get = async () => {};
 
 export const logout = async () => {
   const session = await getSession();

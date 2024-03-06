@@ -2,6 +2,8 @@ export interface SessionData {
   accessToken?: string;
   refreshToken?: string;
   isLoggedIn: boolean;
+  role?: string;
+  expires?: Date;
 }
 
 export const defaultSession: SessionData = {

@@ -29,7 +29,9 @@ export async function GET(request: NextRequest) {
   );
 
   const data = await response.json();
-  const { access_token, refresh_token } = data;
+
+  console.log("data  ", data);
+  const { access_token, refresh_token, expires_in } = data;
 
   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
 
@@ -37,6 +39,10 @@ export async function GET(request: NextRequest) {
     session.accessToken = access_token;
     session.refreshToken = refresh_token;
     session.isLoggedIn = true;
+
+    const expiresInMs = expires_in * 1000;
+    const expiresDate = new Date(new Date().getTime() + expiresInMs);
+    session.expires = expiresDate;
   }
 
   await session.save();
