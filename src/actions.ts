@@ -8,10 +8,12 @@ import { redirect } from "next/navigation";
 export const get = async () => {};
 
 export const getSession = async () => {
-  const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+  let session = await getIronSession<SessionData>(cookies(), sessionOptions);
 
   if (!session.isLoggedIn) {
     session.isLoggedIn = defaultSession.isLoggedIn;
+  } else {
+    session = await refreshTokenIfNecessary(session);
   }
 
   return session;
@@ -20,12 +22,12 @@ export const getSession = async () => {
 export const refreshTokenIfNecessary = async (
   session: IronSession<SessionData>,
 ) => {
-  const now = Date.now();
-  let expires;
-
   if (session !== undefined) {
-    expires = session?.expires!.getTime();
-    if (now >= expires) {
+    const now = Date.now();
+
+    const expires = new Date(session?.expires!);
+
+    if (now >= expires.getTime()) {
       const response = await fetch(
         "https://staging.yggio.net/auth/realms/yggio/protocol/openid-connect/token",
         {

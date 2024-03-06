@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
 
   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
 
-  if (access_token && refresh_token) {
+  if (access_token && refresh_token && expires_in) {
     session.accessToken = access_token;
     session.refreshToken = refresh_token;
     session.isLoggedIn = true;
