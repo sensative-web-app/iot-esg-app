@@ -14,8 +14,6 @@ export async function middleware(request: NextRequest) {
 
   if (!session.isLoggedIn && request.nextUrl.pathname !== "/") {
     return NextResponse.redirect(new URL("/", request.url).toString());
-  } else {
-    session = await refreshTokenIfNecessary(session);
   }
 
   return NextResponse.next();

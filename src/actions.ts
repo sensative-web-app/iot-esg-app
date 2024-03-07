@@ -12,6 +12,8 @@ export const getSession = async () => {
 
   if (!session.isLoggedIn) {
     session.isLoggedIn = defaultSession.isLoggedIn;
+  } else {
+    session = await refreshTokenIfNecessary(session);
   }
 
   return session;
