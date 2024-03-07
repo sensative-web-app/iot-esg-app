@@ -3,6 +3,8 @@ import { getNodes } from "@/actions";
 
 export const Dashboard = async ({ session }: { session: SessionData }) => {
   const accessToken = session.accessToken;
+
+  console.log(session);
   const nodes = await getNodes(accessToken!);
 
   // Filter nodes with name matching 'Strips-Comfort-XXXXXX-etc'

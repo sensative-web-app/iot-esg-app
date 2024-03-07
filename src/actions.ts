@@ -11,24 +11,47 @@ export const getSession = async () => {
   "use server";
   let session = await getIronSession<SessionData>(cookies(), sessionOptions);
 
-  if (!session.isLoggedIn) {
-    session.isLoggedIn = defaultSession.isLoggedIn;
-  } else {
-    const response = await fetch(
-      `https://${process.env.APP_URL}/api/auth/refresh`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
-    );
-
-    const data = await response.json();
-    session.accessToken = data.accessToken;
-    session.refreshToken = data.refreshToken;
-    session.expires = data.expires;
+  if (
+    session &&
+    session.expires &&
+    session.accessToken &&
+    session.refreshToken
+  ) {
+    session = await refreshTokenIfNecessary(session);
   }
+
+  if (!session.isLoggedIn || !session.accessToken) {
+    session.isLoggedIn = defaultSession.isLoggedIn;
+  }
+
+  //
+  // else {
+  //   let response;
+  //   let data;
+
+  //   if (
+  //     session.accessToken !== undefined ||
+  //     session.refreshToken !== undefined ||
+  //     session.expires !== undefined
+  //   ) {
+  //     response = await fetch(
+  //       `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/auth/refresh`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       },
+  //     );
+
+  //     data = await response.json();
+  //   }
+
+  //   console.log("data ", data);
+  //   session.accessToken = data.accessToken;
+  //   session.refreshToken = data.refreshToken;
+  //   session.expires = data.expires;
+  // }
 
   return session;
 };
@@ -60,6 +83,8 @@ export const refreshTokenIfNecessary = async (
       );
 
       const data = await response.json();
+
+      console.log("data i login,", data);
 
       session.accessToken = data.access_token;
       session.refreshToken = data.refresh_token;
