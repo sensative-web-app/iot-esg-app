@@ -14,7 +14,17 @@ export const getSession = async () => {
   if (!session.isLoggedIn) {
     session.isLoggedIn = defaultSession.isLoggedIn;
   } else {
-    session = await refreshTokenIfNecessary(session);
+    const response = await fetch("/api/auth/refresh", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data = await response.json();
+    session.accessToken = data.accessToken;
+    session.refreshToken = data.refreshToken;
+    session.expires = data.expires;
   }
 
   return session;
