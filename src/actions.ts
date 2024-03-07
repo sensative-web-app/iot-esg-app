@@ -8,6 +8,7 @@ import { redirect } from "next/navigation";
 export const get = async () => {};
 
 export const getSession = async () => {
+  "use server";
   let session = await getIronSession<SessionData>(cookies(), sessionOptions);
 
   if (!session.isLoggedIn) {
@@ -22,6 +23,7 @@ export const getSession = async () => {
 export const refreshTokenIfNecessary = async (
   session: IronSession<SessionData>,
 ) => {
+  "use server";
   if (session !== undefined) {
     const now = Date.now();
 
