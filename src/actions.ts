@@ -14,7 +14,7 @@ export const getSession = async () => {
   if (!session.isLoggedIn) {
     session.isLoggedIn = defaultSession.isLoggedIn;
   } else {
-    const response = await fetch("/api/auth/refresh", {
+    const response = await fetch(`${process.env.APP_URL}/api/auth/refresh`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
