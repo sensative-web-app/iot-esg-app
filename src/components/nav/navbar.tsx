@@ -41,11 +41,7 @@ export async function NavBar({
       <NavMenu />
 
       <div>
-        {session.isLoggedIn ? (
-          <Logout />
-        ) : (
-          <div className="mr-2 h-[40px] w-[174px]"></div>
-        )}
+        {session ? <Logout /> : <div className="mr-2 h-[40px] w-[174px]"></div>}
       </div>
     </div>
   );

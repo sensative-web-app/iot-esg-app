@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { getSession, refreshTokenIfNecessary } from "@/actions";
+import { getSession } from "@/actions";
 
 export async function middleware(request: NextRequest) {
   if (
@@ -12,7 +12,7 @@ export async function middleware(request: NextRequest) {
 
   let session = await getSession();
 
-  if (!session.isLoggedIn && request.nextUrl.pathname !== "/") {
+  if (!session && request.nextUrl.pathname !== "/") {
     return NextResponse.redirect(new URL("/", request.url).toString());
   } else {
   }

@@ -30,20 +30,17 @@ export async function GET(request: NextRequest) {
 
   const data = await response.json();
 
-  console.log("data  ", data);
-  const { access_token, refresh_token, expires_in } = data;
-
   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
 
-  if (access_token && refresh_token && expires_in) {
-    session.accessToken = access_token;
-    session.refreshToken = refresh_token;
-    session.isLoggedIn = true;
+  const { access_token, expires_in, refresh_token, refresh_expires_in } = data;
 
-    const expiresInMs = expires_in * 1000;
-    const expiresDate = new Date(new Date().getTime() + expiresInMs);
-    session.expires = expiresDate;
-  }
+  session.accessToken = access_token;
+  session.expires = new Date(new Date().getTime() + expires_in * 1000);
+
+  session.refreshToken = refresh_token;
+  session.refreshExpires = new Date(
+    new Date().getTime() + refresh_expires_in * 1000,
+  );
 
   await session.save();
   const redirectUrl =

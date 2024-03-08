@@ -11,7 +11,7 @@ export default async function Home() {
 
   return (
     <div className="text-primary flex h-[calc(100vh-64px)]  justify-center">
-      {!session.isLoggedIn ? <Login /> : <Dashboard session={session} />}
+      {!session ? <Login /> : <Dashboard session={session!} />}
     </div>
   );
 }
