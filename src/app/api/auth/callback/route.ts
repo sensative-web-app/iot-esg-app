@@ -43,6 +43,7 @@ export async function GET(request: NextRequest) {
   );
 
   await session.save();
+
   const redirectUrl =
     process.env.NODE_ENV === "development"
       ? "http://localhost:3000"

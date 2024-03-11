@@ -11,5 +11,7 @@ export const sessionOptions = {
   cookieName: "iot-esg-app-session",
   cookieOptions: {
     secure: process.env.NODE_ENV === "production",
+    maxAge: 6 * 60 * 60 * 1000,
+    ttl: 6 * 60 * 60 * 1000,
   },
 };

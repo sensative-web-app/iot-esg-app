@@ -10,54 +10,27 @@ export const get = async () => {};
 export const getSession = async () => {
   let session = await getIronSession<SessionData>(cookies(), sessionOptions);
 
-  if (Object.keys(session).length === 0) {
-    return undefined;
-  }
-
   const now = Date.now();
-  const expires = new Date(session?.expires!).getTime();
-  const refreshExpires = new Date(session?.refreshExpires!).getTime();
+  const refreshExpires = new Date(session?.refreshExpires!).getTime() - 3600000;
 
-  if (now >= refreshExpires) {
-    session.destroy();
+  if (
+    Object.keys(session).length === 0 ||
+    now >= refreshExpires ||
+    !session?.accessToken ||
+    !session?.refreshToken ||
+    !session?.expires ||
+    !session?.refreshExpires
+  ) {
     return undefined;
   }
-
-  if (now >= expires) {
-    try {
-      const refreshedSession = await refreshToken(session.refreshToken!);
-
-      session.accessToken = refreshedSession.accessToken;
-      session.refreshToken = refreshedSession.refreshToken;
-      session.expires = refreshedSession.expires;
-      session.refreshExpires = refreshedSession.refreshExpires;
-
-      return session;
-    } catch (error: any) {
-      console.log(error.message);
-      session.destroy();
-      return undefined;
-    }
-  }
-
-  return session;
-};
-
-export const refreshToken = async (refreshToken: string) => {
-  const response = await fetch(`${process.env.APP_URL}/api/auth/refresh`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(refreshToken),
-  });
-
-  const { session } = await response.json();
 
   return session;
 };
 
 export const login = async () => {
+  const session = await getSession();
+  if (session !== undefined) session!.destroy();
+
   const redirectUri = encodeURIComponent(
     `${process.env.NEXT_PUBLIC_YGGIO_REDIRECT_URI}`,
   );
@@ -76,13 +49,22 @@ export const logout = async () => {
 };
 
 export const getNodes = async (token: string) => {
-  const response = await fetch("https://staging.yggio.net/api/iotnodes", {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  });
-  const nodes = await response.json();
+  let response;
+  let nodes;
+
+  try {
+    response = await fetch("https://staging.yggio.net/api/iotnodes", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    nodes = await response.json();
+  } catch (e) {
+    console.log(e);
+    return undefined;
+  }
+
   return nodes;
 };
