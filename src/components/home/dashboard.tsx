@@ -1,17 +1,36 @@
 import { SessionData } from "@/lib/session";
-import { getNodes } from "@/actions";
+import { getNodes, getUser } from "@/actions";
+import { Temperature } from "./temperature";
 
-export const Dashboard = async ({ session }: { session: SessionData }) => {
-  const accessToken = session.accessToken!;
+export const Dashboard = async ({
+  session,
+  nodes,
+}: {
+  session: SessionData;
+  nodes: any[];
+}) => {
+  const user = await getUser(session.accessToken!);
+  const userID = user._id;
 
-  const nodes = await getNodes(accessToken);
+  const nodesWithTemperature = [];
 
-  // Filter nodes with name matching 'Strips-Comfort-XXXXXX-etc'
-  let matchingNodes = nodes.filter((node: any) =>
-    node.name.startsWith("Strips-Comfort"),
+  for (const node in nodes) {
+    if (nodes[node].temperature) {
+      nodesWithTemperature.push(nodes[node]);
+    }
+  }
+
+  return (
+    <div className="pt-8">
+      {nodesWithTemperature.length > 0 ? (
+        <Temperature
+          session={session}
+          userID={userID}
+          nodes={nodesWithTemperature}
+        />
+      ) : (
+        <div>No nodes with temperature sensors found</div>
+      )}
+    </div>
   );
-
-  const nodeIds = nodes.map((node: any) => node._id);
-
-  return <div className="pt-8">total nodes: {nodes.length}</div>;
 };

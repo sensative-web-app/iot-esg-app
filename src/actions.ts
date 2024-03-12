@@ -53,13 +53,16 @@ export const getNodes = async (token: string) => {
   let nodes;
 
   try {
-    response = await fetch("https://staging.yggio.net/api/iotnodes", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+    response = await fetch(
+      `${process.env.NEXT_PUBLIC_YGGIO_API_URL}/iotnodes`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       },
-    });
+    );
     nodes = await response.json();
   } catch (e) {
     console.log(e);
@@ -67,4 +70,76 @@ export const getNodes = async (token: string) => {
   }
 
   return nodes;
+};
+
+export const getUser = async (token: string) => {
+  let response;
+  let user;
+
+  try {
+    response = await fetch(
+      `${process.env.NEXT_PUBLIC_YGGIO_API_URL}/users/me`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      },
+    );
+    user = await response.json();
+  } catch (e) {
+    console.log(e);
+    return undefined;
+  }
+
+  return user;
+};
+
+export const getChannels = async (token: string, nodeID: string) => {
+  let response;
+  let channels;
+
+  try {
+    response = await fetch(
+      `${process.env.NEXT_PUBLIC_YGGIO_API_URL}/channels?iotnode=${nodeID}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      },
+    );
+    channels = await response.json();
+  } catch (e) {
+    console.log(e);
+    return undefined;
+  }
+
+  return channels;
+};
+
+export const createBasicCredentialsSet = async (token: string) => {
+  let response;
+  let credentials;
+
+  try {
+    response = await fetch(
+      `${process.env.NEXT_PUBLIC_YGGIO_API_URL}/basic-credentials-set`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      },
+    );
+    credentials = await response.json();
+  } catch (e) {
+    console.log(e);
+    return undefined;
+  }
+
+  return credentials;
 };
