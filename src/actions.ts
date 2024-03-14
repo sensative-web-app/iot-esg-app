@@ -120,7 +120,20 @@ export const getChannels = async (token: string, nodeID: string) => {
   return channels;
 };
 
-export const createBasicCredentialsSet = async (token: string) => {
+export const getBasicCredentialSet = async (token: string) => {
+  let set;
+  const currentSets = await getBasicCredentialsSets(token);
+
+  console.log("currentSets", currentSets);
+  if (!currentSets) {
+    // set = await createBasicCredentialsSet(token);
+    // console.log("set", set);
+  }
+
+  return currentSets;
+};
+
+export const getBasicCredentialsSets = async (token: string) => {
   let response;
   let credentials;
 
@@ -135,11 +148,85 @@ export const createBasicCredentialsSet = async (token: string) => {
         },
       },
     );
+
+    if (response.status === 404) return undefined;
+
+    console.log("response", response);
     credentials = await response.json();
-  } catch (e) {
-    console.log(e);
+    console.log("credentials", credentials);
+  } catch (error: any) {
+    console.log(error.message);
     return undefined;
   }
 
   return credentials;
 };
+
+export const createBasicCredentialsSet = async (token: string) => {
+  let response;
+  let credentials;
+
+  try {
+    response = await fetch(
+      `${process.env.NEXT_PUBLIC_YGGIO_API_URL}/basic-credentials-set`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: "test-iot-esg-app",
+          password: "super-secret-password",
+        }),
+      },
+    );
+    console.log("response", response);
+
+    if (response.status === 404) {
+      return undefined;
+    }
+
+    console.log("response", response);
+    credentials = await response.json();
+    console.log("credentials", credentials);
+  } catch (e) {
+    console.log("e", e);
+
+    return undefined;
+  }
+
+  return credentials;
+};
+
+export const createChannel = async (token: string, nodeID: string) => {
+  const basicCredentialsSet = await createBasicCredentialsSet(token);
+
+  let response;
+  let channel;
+
+  try {
+    // response = await fetch(
+    //   `${process.env.NEXT_PUBLIC_YGGIO_API_URL}/basic-credentials-set`,
+    //   {
+    //     method: "POST",
+    //     headers: {
+    //       Authorization: `Bearer ${token}`,
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({
+    //       username: "test-iot-esg-app",
+    //       password: "super-secret-password"
+    //     }),
+    //   },
+    // );
+    // channel = await response.json();
+  } catch (e) {
+    console.log(e);
+    return undefined;
+  }
+
+  return channel;
+};
+
+export const get2 = async () => {};

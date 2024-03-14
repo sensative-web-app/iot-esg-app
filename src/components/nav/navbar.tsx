@@ -13,6 +13,7 @@ export async function NavBar({
   return (
     <div
       className={` border-b-primary/30 flex h-16 items-center justify-between border-b px-4`}
+      data-cy="navbar"
       {...props}
     >
       <div className="flex flex-initial flex-row items-center gap-2 ">

@@ -1,4 +1,4 @@
-import { getChannels } from "@/actions";
+import { createChannel, getBasicCredentialSet } from "@/actions";
 import { SessionData } from "@/lib/session";
 import { IronSession } from "iron-session";
 
@@ -14,9 +14,10 @@ export const Temperature = async ({
   const node = nodes.find((node) => node.name.includes("Comfort"));
   const nodeID = node._id;
 
-  const channels = await getChannels(session.accessToken!, nodeID);
+  // const channel = await createChannel(session.accessToken!, nodeID)
+  //
 
-  console.log(channels);
+  const sets = await getBasicCredentialSet(session.accessToken!);
 
   return (
     <div className="pt-8">
