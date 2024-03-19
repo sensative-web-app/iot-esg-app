@@ -1,6 +1,6 @@
 describe("OAuth login flow", () => {
   it("successfully logs in via OAuth and redirects back with a session", () => {
-    cy.visit("http://localhost:3000");
+    cy.visit(Cypress.env("localhost_url"));
     cy.get('[data-cy="navbar"]').should("not.contain", "log out");
 
     cy.get(".inline-flex").click();
@@ -12,7 +12,7 @@ describe("OAuth login flow", () => {
       cy.get('[data-cy="login-SignInButton"]').click();
     });
 
-    cy.url().should("include", "localhost:3000");
+    cy.url().should("include", Cypress.env("localhost_url"));
     cy.get('[data-cy="navbar"]').contains("log out");
   });
 });
