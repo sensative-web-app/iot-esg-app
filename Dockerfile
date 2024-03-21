@@ -1,26 +1,26 @@
-# Use the official Node.js image with a specific version
-FROM node:20.8.0-bullseye-slim
+# Loosely based on the Next.js example:
+# https://github.com/vercel/next.js/blob/canary/examples/with-docker/Dockerfile
 
-# Set the working directory
-WORKDIR /usr/src/app
+FROM node:20.10.0-bullseye-slim AS base
+ENV NEXT_TELEMETRY_DISABLED=1
 
-# Copy package.json and package-lock.json
+FROM base AS builder
+WORKDIR /build
 COPY package*.json ./
-
-# Install production dependencies
-RUN npm ci --omit=dev
-
-# Copy the rest of the application code
-COPY . .
-
-# Build the Next.js application
+RUN npm ci
+COPY *.json *.js *.mjs *.ts ./
+COPY public ./public
+COPY src ./src
 RUN npm run build
 
-# Set the user to non-root for security
+FROM base as runner
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOSTNAME=0.0.0.0
 USER node
-
-# Expose the port the app runs on
-EXPOSE ${NODE_PORT}
-
-# Define the command to run the app
-CMD ["npm", "start"]
+RUN mkdir -p /home/node/app/.next
+WORKDIR /home/node/app
+COPY --from=builder --chown=node:node /build/.next/standalone ./
+COPY --from=builder --chown=node:node /build/.next/static ./.next/static
+EXPOSE ${PORT}
+CMD ["node", "server.js"]
