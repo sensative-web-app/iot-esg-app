@@ -12,7 +12,7 @@ export const Temperature = async ({
   session: SessionData;
 }) => {
   const node = nodes.find((node) => node.name.includes("Comfort"));
-  const nodeID = node._id;
+  const nodeID = node?._id;
 
   // const channel = await createChannel(session.accessToken!, nodeID)
   //
