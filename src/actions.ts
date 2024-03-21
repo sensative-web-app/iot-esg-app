@@ -24,6 +24,7 @@ export const getSession = async () => {
     return undefined;
   }
 
+  console.log(session);
   return session;
 };
 
@@ -88,8 +89,10 @@ export const getUser = async (token: string) => {
       },
     );
     user = await response.json();
-  } catch (e) {
-    console.log(e);
+
+    console.log("user i server action", user);
+  } catch (error: any) {
+    console.log(error.message);
     return undefined;
   }
 

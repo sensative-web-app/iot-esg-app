@@ -10,7 +10,7 @@ export const Dashboard = async ({
   nodes: any[];
 }) => {
   const user = await getUser(session.accessToken!);
-  const userID = user._id;
+  // const userID = user._id;
 
   const nodesWithTemperature = [];
 
@@ -22,7 +22,7 @@ export const Dashboard = async ({
 
   return (
     <div className="pt-8">
-      {nodesWithTemperature.length > 0 ? (
+      {/* {nodesWithTemperature.length > 0 ? (
         <Temperature
           session={session}
           userID={userID}
@@ -30,7 +30,7 @@ export const Dashboard = async ({
         />
       ) : (
         <div>No nodes with temperature sensors found</div>
-      )}
+      )} */}
     </div>
   );
 };
