@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { getSession } from "@/actions";
+import { getSession, logout } from "@/actions";
 
 export async function middleware(request: NextRequest) {
   if (
@@ -18,9 +18,11 @@ export async function middleware(request: NextRequest) {
     const anHourBeforeTokenExpires = expires - 3600000;
 
     if (now >= anHourBeforeTokenExpires) {
+      const refreshToken = session.refreshToken;
+
       return NextResponse.redirect(
         new URL(
-          `/api/auth/refresh?token=${session.refreshToken}`,
+          `/api/auth/refresh?token=${refreshToken}`,
           request.url,
         ).toString(),
       );

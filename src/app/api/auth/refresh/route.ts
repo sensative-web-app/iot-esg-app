@@ -1,7 +1,8 @@
 import { cookies } from "next/headers";
 import { getIronSession } from "iron-session";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { SessionData, sessionOptions } from "@/lib/session";
+import { getSession } from "@/actions";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -25,7 +26,12 @@ export async function GET(request: NextRequest) {
 
   const data = await response.json();
 
+  const prevSession = await getSession();
+  if (prevSession) prevSession!.destroy();
+
   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+
+  console.log("session i refresh", session);
 
   session.accessToken = data.access_token;
   session.expires = new Date(new Date().getTime() + data.expires_in * 1000);
@@ -43,5 +49,5 @@ export async function GET(request: NextRequest) {
         ? process.env.APP_URL!
         : `https://${process.env.APP_URL}`;
 
-  return Response.redirect(redirectUrl);
+  return NextResponse.redirect(redirectUrl);
 }

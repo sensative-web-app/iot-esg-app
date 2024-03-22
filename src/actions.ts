@@ -24,7 +24,8 @@ export const getSession = async () => {
     return undefined;
   }
 
-  console.log(session);
+  // console.log("token i getSession: ", session?.accessToken);
+
   return session;
 };
 
@@ -73,7 +74,7 @@ export const getNodes = async (token: string) => {
   return nodes;
 };
 
-export const getUser = async (token: string) => {
+export const getUser = async (session: SessionData) => {
   let response;
   let user;
 
@@ -83,16 +84,14 @@ export const getUser = async (token: string) => {
       {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${session.accessToken}`,
           "Content-Type": "application/json",
         },
       },
     );
-    user = await response.json();
 
-    console.log("user i server action", user);
+    user = await response.json();
   } catch (error: any) {
-    console.log(error.message);
     return undefined;
   }
 
@@ -123,17 +122,49 @@ export const getChannels = async (token: string, nodeID: string) => {
   return channels;
 };
 
-export const getBasicCredentialSet = async (token: string) => {
-  let set;
-  const currentSets = await getBasicCredentialsSets(token);
+export const createBasicCredentialsSet = async (id: string, token: string) => {
+  let response;
+  let credentials;
 
-  console.log("currentSets", currentSets);
-  if (!currentSets) {
-    // set = await createBasicCredentialsSet(token);
-    // console.log("set", set);
+  try {
+    response = await fetch(
+      `${process.env.NEXT_PUBLIC_YGGIO_API_URL}/basic-credentials-sets`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: `user-${id}`,
+          password: "super-secret-password",
+        }),
+      },
+    );
+
+    if (response.status === 404) {
+      return undefined;
+    }
+
+    credentials = await response.json();
+  } catch (error: any) {
+    console.log("e", error.message);
+
+    return undefined;
   }
 
-  return currentSets;
+  return credentials;
+};
+
+export const getBasicCredentialSet = async (id: string, token: string) => {
+  const currentSets = await getBasicCredentialsSets(token);
+  let set;
+
+  if (currentSets.length === 0 || currentSets === undefined) {
+    set = await createBasicCredentialsSet(id, token);
+  }
+
+  return set ? set : currentSets[0];
 };
 
 export const getBasicCredentialsSets = async (token: string) => {
@@ -142,7 +173,7 @@ export const getBasicCredentialsSets = async (token: string) => {
 
   try {
     response = await fetch(
-      `${process.env.NEXT_PUBLIC_YGGIO_API_URL}/basic-credentials-set`,
+      `${process.env.NEXT_PUBLIC_YGGIO_API_URL}/basic-credentials-sets`,
       {
         method: "GET",
         headers: {
@@ -154,9 +185,7 @@ export const getBasicCredentialsSets = async (token: string) => {
 
     if (response.status === 404) return undefined;
 
-    console.log("response", response);
     credentials = await response.json();
-    console.log("credentials", credentials);
   } catch (error: any) {
     console.log(error.message);
     return undefined;
@@ -164,14 +193,17 @@ export const getBasicCredentialsSets = async (token: string) => {
 
   return credentials;
 };
-
-export const createBasicCredentialsSet = async (token: string) => {
+export const createChannel = async (
+  token: string,
+  nodeID: string,
+  basicCredentialsSetId: string,
+) => {
   let response;
-  let credentials;
+  let channel;
 
   try {
     response = await fetch(
-      `${process.env.NEXT_PUBLIC_YGGIO_API_URL}/basic-credentials-set`,
+      `${process.env.NEXT_PUBLIC_YGGIO_API_URL}/channels`,
       {
         method: "POST",
         headers: {
@@ -179,53 +211,25 @@ export const createBasicCredentialsSet = async (token: string) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: "test-iot-esg-app",
-          password: "super-secret-password",
+          name: "iot-esg-app-test",
+          iotnode: nodeID,
+          mqtt: {
+            type: "basicCredentialsSet",
+            recipient: basicCredentialsSetId,
+          },
         }),
       },
     );
-    console.log("response", response);
 
-    if (response.status === 404) {
+    if (response.ok) {
+      channel = await response.json();
+      console.log("Channel created:", channel);
+    } else {
+      console.log("Failed to create channel:", response.statusText);
       return undefined;
     }
-
-    console.log("response", response);
-    credentials = await response.json();
-    console.log("credentials", credentials);
   } catch (e) {
-    console.log("e", e);
-
-    return undefined;
-  }
-
-  return credentials;
-};
-
-export const createChannel = async (token: string, nodeID: string) => {
-  const basicCredentialsSet = await createBasicCredentialsSet(token);
-
-  let response;
-  let channel;
-
-  try {
-    // response = await fetch(
-    //   `${process.env.NEXT_PUBLIC_YGGIO_API_URL}/basic-credentials-set`,
-    //   {
-    //     method: "POST",
-    //     headers: {
-    //       Authorization: `Bearer ${token}`,
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({
-    //       username: "test-iot-esg-app",
-    //       password: "super-secret-password"
-    //     }),
-    //   },
-    // );
-    // channel = await response.json();
-  } catch (e) {
-    console.log(e);
+    console.log("Error creating channel:", e);
     return undefined;
   }
 

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Logout } from "@/components/auth/logout";
 import { NavMenu } from "./nav-menu";
 import Image from "next/image";
+import Logo from "../../../public/sensativehd.png";
 
 export async function NavBar({
   className,
@@ -25,7 +26,7 @@ export async function NavBar({
             <Image
               priority={true}
               className=""
-              src={"/sensativehd.png"}
+              src={Logo}
               alt="Sensative Logo"
               width={36}
               height={36}
