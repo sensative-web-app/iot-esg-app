@@ -5,7 +5,7 @@ export default defineConfig({
     localhost_url: "http://localhost:3000",
     yggio_url: "https://staging.yggio.net",
     username: "ek223ur",
-    password: "",
+    password: "test123",
   },
 
   e2e: {

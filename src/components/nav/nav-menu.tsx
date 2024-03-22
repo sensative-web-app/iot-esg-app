@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export const NavMenu = () => {
+export const NavMenu = ({ role }: { role: string }) => {
   return (
     <div className="text-primary flex w-48 flex-row justify-between">
       <Link

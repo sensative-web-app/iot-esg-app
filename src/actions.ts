@@ -11,6 +11,7 @@ export const getSession = async () => {
   let session = await getIronSession<SessionData>(cookies(), sessionOptions);
 
   const now = Date.now();
+  const expires = new Date(session?.expires!).getTime() - 3600000;
   const refreshExpires = new Date(session?.refreshExpires!).getTime() - 3600000;
 
   if (
@@ -19,12 +20,13 @@ export const getSession = async () => {
     !session?.accessToken ||
     !session?.refreshToken ||
     !session?.expires ||
-    !session?.refreshExpires
+    !session?.refreshExpires ||
+    now >= expires
   ) {
     return undefined;
   }
 
-  // console.log("token i getSession: ", session?.accessToken);
+  console.log("role i getSession: ", session?.role);
 
   return session;
 };
@@ -96,6 +98,31 @@ export const getUser = async (session: SessionData) => {
   }
 
   return user;
+};
+
+export const getRole = async (token: string) => {
+  let response;
+  let role;
+
+  try {
+    response = await fetch(
+      `${process.env.NEXT_PUBLIC_YGGIO_API_URL}/usergroups`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      },
+    );
+
+    const groups = await response.json();
+    role = groups[0].name;
+  } catch (error: any) {
+    return undefined;
+  }
+
+  return role;
 };
 
 export const getChannels = async (token: string, nodeID: string) => {
@@ -234,6 +261,58 @@ export const createChannel = async (
   }
 
   return channel;
+};
+
+/*
+ * Retrieves the stat for a node.
+ *
+ * token, nodeID, measurement = Required.
+ * start, end, distance = Optional.
+ *
+ * @param {string} token - The accesstoken required to access the API.
+ * @param {string} nodeID - The ID of the node for which to retrieve stats.
+ * @param {string} measurement - The name of the measurement to retrieve stats for.
+ * @param {number} start - The start of the time period, in unix milliseconds time (i.e., milliseconds since 1970-01-01 00:00:00).
+ * @param {number} end - The end of the time period, in unix milliseconds time (i.e., milliseconds since 1970-01-01 00:00:00).
+ * @param {number} distance - The number of seconds between data points.
+ */
+export const getNodeStats = async (
+  token: string,
+  nodeID: string,
+  measurement: string,
+  start?: number,
+  end?: number,
+  distance?: number,
+) => {
+  let url = `${process.env.NEXT_PUBLIC_YGGIO_API_URL}/iotnodes/${nodeID}/stats?measurement=${measurement}`;
+
+  if (start !== undefined) {
+    url += `&start=${start}`;
+  }
+
+  if (end !== undefined) {
+    url += `&end=${end}`;
+  }
+
+  if (distance !== undefined) {
+    url += `&distance=${distance}`;
+  }
+
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  const stats = await response.json();
+
+  if (response.ok) {
+    return stats;
+  } else {
+    return undefined;
+  }
 };
 
 export const get2 = async () => {};

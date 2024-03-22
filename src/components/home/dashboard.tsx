@@ -1,5 +1,6 @@
 import { SessionData } from "@/lib/session";
-import { getBasicCredentialSet, getUser } from "@/actions";
+import { Tenant } from "./views/tenant";
+import { PropertyOwner } from "./views/property-owner";
 
 export const Dashboard = async ({
   session,
@@ -8,22 +9,15 @@ export const Dashboard = async ({
   session: SessionData;
   nodes: any[];
 }) => {
-  const user = await getUser(session!);
-  console.log("user", user);
-  const userID = user._id;
+  return (
+    <div className="pt-8">
+      {session.role === "tenant" && <Tenant session={session} />}
 
-  const nodesWithTemperature = [];
+      {session.role === "property owner" && <PropertyOwner session={session} />}
 
-  for (const node in nodes) {
-    if (nodes[node].temperature) {
-      nodesWithTemperature.push(nodes[node]);
-    }
-  }
-  const node = nodes.find((node) => node.name.includes("Comfort"));
-  const nodeID = node._id;
-  const set = await getBasicCredentialSet(userID, session.accessToken!);
-
-  console.log(set);
-
-  return <div className="pt-8"></div>;
+      {!session.role && (
+        <div>No role assigned / you do not belong to any usergroup yet</div>
+      )}
+    </div>
+  );
 };

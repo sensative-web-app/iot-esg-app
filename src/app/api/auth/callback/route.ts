@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { getIronSession } from "iron-session";
 import { NextRequest } from "next/server";
 import { SessionData, sessionOptions } from "@/lib/session";
+import { getRole } from "@/actions";
 
 export async function GET(request: NextRequest) {
   const clientID = process.env.NEXT_PUBLIC_YGGIO_CLIENT_ID!;
@@ -41,6 +42,10 @@ export async function GET(request: NextRequest) {
   session.refreshExpires = new Date(
     new Date().getTime() + refresh_expires_in * 1000,
   );
+
+  const role = await getRole(access_token);
+
+  if (role) session.role = role;
 
   await session.save();
 

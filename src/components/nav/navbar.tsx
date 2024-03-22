@@ -40,9 +40,18 @@ export async function NavBar({
         </Link>
       </div>
 
-      <NavMenu />
+      <NavMenu role={session?.role ? session.role : ""} />
 
-      <div>
+      <div className="flex flex-row items-center justify-center">
+        {session?.role === "property owner" && (
+          <Link
+            className="text-primary hover:text-primary/80 duration-250 transition-colors"
+            href={"/reports"}
+          >
+            reports
+          </Link>
+        )}
+
         {session ? <Logout /> : <div className="mr-2 h-[40px] w-[174px]"></div>}
       </div>
     </div>
