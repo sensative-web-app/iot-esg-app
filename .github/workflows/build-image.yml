@@ -1,7 +1,6 @@
-# Build a container image with Podman/Buildah, based on Red Hat's example:
-# https://www.redhat.com/en/blog/build-ubi-containers-github-actions-buildah-and-podman
+# Build a container image and run Cypress tests.
 
-name: Build and publish container image
+name: Build, publish and test container image
 
 on:
   push:
@@ -17,6 +16,10 @@ jobs:
     permissions:
       contents: read
       packages: write
+
+    outputs:
+      image-url: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}\
+                  @${{ steps.push-to-ghcr.outputs.digest }}"
 
     steps:
       - name: Checkout repository
@@ -47,3 +50,50 @@ jobs:
           image: ${{ steps.build-image.outputs.image }}
           tags: ${{ steps.build-image.outputs.tags }}
           registry: ${{ env.REGISTRY }}
+
+  run-cypress-tests:
+    runs-on: ubuntu-latest
+
+    container:
+      image: docker.io/cypress/included:13.7.0
+
+    needs: build-and-push-image
+
+    services:
+      app:
+        image: ${{ needs.build-and-push-image.outputs.image-url }}
+        credentials:
+          username: ${{ github.actor }}
+          password: ${{ secrets.github_token }}
+        ports:
+          - 3000
+        env:
+          APP_URL: http://app:3000
+          NEXT_PUBLIC_AUTHORIZATION_ENDPOINT: "https://staging.yggio.net\
+              /auth/realms/yggio/protocol/openid-connect/auth"
+          NEXT_PUBLIC_YGGIO_API_URL: https://staging.yggio.net/api
+          NEXT_PUBLIC_YGGIO_REDIRECT_URI: http://app:3000/api/auth/callback
+          NEXT_PUBLIC_YGGIO_CLIENT_ID: iot-esg-app-ci
+          YGGIO_CLIENT_SECRET: ${{ secrets.YGGIO_CLIENT_SECRET }}
+          SECRET_COOKIE_PASSWORD: ${{ secrets.SECRET_COOKIE_PASSWORD }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          cache: npm
+
+      - name: Install dependencies
+        run: |
+          mv package.json package.json.bak
+          npm install --prefer-offline --no-audit --no-save typescript@^5
+
+      - name: Run Cypress E2E tests
+        env:
+          cypress_localhost_url: http://app:3000/
+          cypress_username: LNU_hyresgast_1
+          cypress_password: ${{ secrets.CYPRESS_PASSWORD }}
+        run: cypress run
