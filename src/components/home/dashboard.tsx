@@ -1,6 +1,5 @@
 import { SessionData } from "@/lib/session";
 import { getBasicCredentialSet, getUser } from "@/actions";
-import { Temperature } from "./temperature";
 
 export const Dashboard = async ({
   session,
@@ -26,18 +25,5 @@ export const Dashboard = async ({
 
   console.log(set);
 
-  return (
-    <div className="pt-8">
-      {nodesWithTemperature.length > 0 ? (
-        <Temperature
-          // session={session}
-          userID={userID}
-          nodeID={nodeID}
-          setID={set._id}
-        />
-      ) : (
-        <div>No nodes with temperature sensors found</div>
-      )}
-    </div>
-  );
+  return <div className="pt-8"></div>;
 };
