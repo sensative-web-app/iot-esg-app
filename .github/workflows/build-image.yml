@@ -11,6 +11,28 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
+  run-unit-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          cache: npm
+          node-version: 20.10
+
+      - name: Install dependencies
+        run: npm install --prefer-offline --no-audit ci
+
+      - name: Run linter
+        run: npm run lint
+
+      - name: Run unit tests
+        run: npm run test
+
   build-and-push-image:
     runs-on: ubuntu-latest
     permissions:
