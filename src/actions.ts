@@ -76,6 +76,30 @@ export const getNodes = async (token: string) => {
   return nodes;
 };
 
+export const getNode = async (token: string, nodeID: string) => {
+  let response;
+  let node;
+
+  try {
+    response = await fetch(
+      `${process.env.NEXT_PUBLIC_YGGIO_API_URL}/iotnodes/${nodeID}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      },
+    );
+    node = await response.json();
+  } catch (e) {
+    console.log(e);
+    return undefined;
+  }
+
+  return node;
+};
+
 export const getUser = async (session: SessionData) => {
   let response;
   let user;
@@ -86,14 +110,16 @@ export const getUser = async (session: SessionData) => {
       {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${session.accessToken}`,
+          Authorization: `Bearer ${session.accessToken!}`,
           "Content-Type": "application/json",
         },
       },
     );
 
     user = await response.json();
+    console.log("user: ", user);
   } catch (error: any) {
+    console.log(error);
     return undefined;
   }
 
@@ -313,6 +339,15 @@ export const getNodeStats = async (
   } else {
     return undefined;
   }
+};
+
+export const getList = () => {
+  const list = {
+    co2: "6234b61cd68c97000897fca9",
+    temperatureID: "60a3ab8b007e8f00076009eb",
+  };
+
+  return list;
 };
 
 export const get2 = async () => {};

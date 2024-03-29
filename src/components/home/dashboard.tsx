@@ -1,5 +1,5 @@
 import { SessionData } from "@/lib/session";
-import { Tenant } from "./views/tenant";
+import { Tenant } from "./views/tenant/tenant";
 import { PropertyOwner } from "./views/property-owner";
 
 export const Dashboard = async ({
@@ -9,9 +9,11 @@ export const Dashboard = async ({
   session: SessionData;
   nodes: any[];
 }) => {
+  //console.log(session.accessToken);
+
   return (
     <div className="pt-8">
-      {session.role === "tenant" && <Tenant session={session} />}
+      {session.role === "tenant" && <Tenant session={session} nodes={nodes} />}
 
       {session.role === "property owner" && <PropertyOwner session={session} />}
 
