@@ -1,6 +1,7 @@
 import { getSession } from "@/actions";
 import { NavBar } from "./navbar";
 import { SideNav } from "./side-nav";
+import { ErrorBoundary } from "react-error-boundary";
 
 export async function Nav({ children }: { children: React.ReactNode }) {
   const session = await getSession();
@@ -45,14 +46,16 @@ export async function Nav({ children }: { children: React.ReactNode }) {
 
   return (
     <div>
-      <NavBar role={session?.role ? session.role : ""} />
+      <ErrorBoundary fallback={<div>an error has occurred</div>}>
+        <NavBar role={session?.role ? session.role : ""} />
 
-      <SideNav
-        session={session?.role ? session.role : undefined}
-        options={options}
-      >
-        {children}
-      </SideNav>
+        <SideNav
+          session={session?.role ? session.role : undefined}
+          options={options}
+        >
+          {children}
+        </SideNav>
+      </ErrorBoundary>
     </div>
   );
 }

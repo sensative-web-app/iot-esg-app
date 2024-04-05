@@ -87,7 +87,7 @@ export const getNode = async (token: string, nodeID: string) => {
   return node;
 };
 
-export const getUser = async (session: SessionData) => {
+export const getUser = async (token: string) => {
   let response;
   let user;
 
@@ -97,7 +97,7 @@ export const getUser = async (session: SessionData) => {
       {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${session.accessToken!}`,
+          Authorization: `Bearer ${token!}`,
           "Content-Type": "application/json",
         },
       },

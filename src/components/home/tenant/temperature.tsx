@@ -61,7 +61,7 @@ export const Temperature = ({
   return (
     <ErrorBoundary fallback={<div></div>}>
       <Card className="w-80 rounded-2xl">
-        <CardContent className="w-full h-full p-0">
+        <CardContent className="w-full h-full p-8">
           <div className="flex flex-row items-center w-full justify-center h-full gap-8 ">
             <ThermometerIcon />
             <div className="grid gap-4">
