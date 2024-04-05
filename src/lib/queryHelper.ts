@@ -50,8 +50,8 @@ export const fetchElectricityData = async (
     distance,
   });
 
-  console.log("consumption data: ", incrementalConsumptionData.length);
-  console.log("price data: ", electricityPriceData!.length);
+  // console.log("consumption data: ", incrementalConsumptionData.length);
+  // console.log("price data: ", electricityPriceData!.length);
 
   const labels = incrementalConsumptionData.map((item: any) =>
     item.x.toISOString(),
@@ -115,7 +115,7 @@ const fetchElectricityPriceData = async ({
 
   const formatData = (rawElectricityPriceData: any) => {
     let data = [];
-    console.log(rawElectricityPriceData.length);
+
     for (let i = 0; i < rawElectricityPriceData.length; i++) {
       data.push({
         x: new Date(rawElectricityPriceData[i].time),

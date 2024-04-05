@@ -15,7 +15,7 @@ export function SideNav({
 }: {
   options: string[];
   children: React.ReactNode;
-  session: SessionData | undefined;
+  session: string | undefined;
 }) {
   const currentPath = usePathname();
 

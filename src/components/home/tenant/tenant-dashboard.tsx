@@ -34,7 +34,7 @@ export const TenantDashboard = async ({
 
   return (
     <div className="flex flex-col h-full w-full justify-center gap-12">
-      <div className="flex w-full justify-center gap-16 ">
+      <div className="flex w-full justify-center mt-10 gap-16 ">
         <Temperature
           nodeID={"60a3ab8b007e8f00076009eb"}
           currentValue={temperatureNode.temperature}
@@ -51,7 +51,7 @@ export const TenantDashboard = async ({
         />
       </div>
 
-      <div className="w-full justify-center">
+      <div className="w-full h-full justify-center">
         <HydrationBoundary state={dehydrate(queryClient)}>
           <ChartWrapper accessToken={session.accessToken!} />
         </HydrationBoundary>

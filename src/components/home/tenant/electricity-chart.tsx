@@ -26,14 +26,9 @@ ChartJS.register(
   TimeScale,
 );
 
-const ElectricityChart = ({
-  electricityConsumptionData,
-}: {
-  electricityConsumptionData: any;
-}) => {
-  console.log(electricityConsumptionData);
-  const chartData = electricityConsumptionData.data;
-  const xAxisOptions = electricityConsumptionData.xAxisOptions;
+const ElectricityChart = ({ data }: { data: any }) => {
+  const chartData = data.data;
+  const xAxisOptions = data.xAxisOptions;
 
   const options = {
     responsive: true,

@@ -11,7 +11,7 @@ export default async function Index() {
 
   if (!session) {
     return (
-      <div className="flex w-full   text-primary">
+      <div className="flex w-full justify-center  text-primary">
         <Login />
       </div>
     );

@@ -3,51 +3,35 @@
 import { SessionData, sessionOptions } from "./lib/session";
 import { getIronSession } from "iron-session";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 
 export const get = async () => {};
 
 export const getSession = async () => {
   "use server";
   let session = await getIronSession<SessionData>(cookies(), sessionOptions);
-  const now = Date.now();
-  const expires = new Date(session?.expires!).getTime() - 3600000;
-  const refreshExpires = new Date(session?.refreshExpires!).getTime() - 3600000;
 
-  if (now >= expires) {
+  if (Object.keys(session).length === 0 || !session?.accessToken) {
     return undefined;
   }
-
-  if (
-    Object.keys(session).length === 0 ||
-    now >= refreshExpires ||
-    !session?.accessToken ||
-    !session?.refreshToken ||
-    !session?.expires ||
-    !session?.refreshExpires
-  ) {
-    return undefined;
-  }
-
-  console.log("role i getSession: ", session?.role);
 
   return session;
 };
 
-export const login = async () => {
-  const session = await getSession();
-  if (session !== undefined) session!.destroy();
+// export const login = async () => {
+//   const session = await getSession();
+//   if (session !== undefined) session!.destroy();
 
-  const redirectUri = encodeURIComponent(
-    `${process.env.NEXT_PUBLIC_YGGIO_REDIRECT_URI}`,
-  );
-  const clientId = encodeURIComponent(
-    `${process.env.NEXT_PUBLIC_YGGIO_CLIENT_ID}`,
-  );
-  const url = `${process.env.NEXT_PUBLIC_AUTHORIZATION_ENDPOINT}/?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=openid`;
+//   const redirectUri = encodeURIComponent(
+//     `${process.env.NEXT_PUBLIC_YGGIO_REDIRECT_URI}`,
+//   );
+//   const clientId = encodeURIComponent(
+//     `${process.env.NEXT_PUBLIC_YGGIO_CLIENT_ID}`,
+//   );
+//   const url = `${process.env.NEXT_PUBLIC_AUTHORIZATION_ENDPOINT}/?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=openid`;
 
-  redirect(url);
-};
+//   redirect(url);
+// };
 
 export const logout = async () => {
   const session = await getSession();

@@ -47,7 +47,10 @@ export async function Nav({ children }: { children: React.ReactNode }) {
     <div>
       <NavBar role={session?.role ? session.role : ""} />
 
-      <SideNav session={session} options={options}>
+      <SideNav
+        session={session?.role ? session.role : undefined}
+        options={options}
+      >
         {children}
       </SideNav>
     </div>

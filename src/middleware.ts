@@ -10,28 +10,33 @@ export async function middleware(request: NextRequest) {
   }
 
   let session = await getSession();
+  // if (!session?.accessToken) {
+  //   return NextResponse.redirect(new URL("/", request.url).toString());
+  // }
 
-  if (session && session.refreshToken && session.expires) {
-    const now = Date.now();
-    const expires = new Date(session.expires).getTime();
+  // console.log(session);
 
-    const anHourBeforeTokenExpires = expires - 3600000;
+  // if (session && session.refreshToken && session.expires) {
+  //   const now = Date.now();
+  //   const expires = new Date(session.expires).getTime();
 
-    if (now >= anHourBeforeTokenExpires) {
-      const refreshToken = session.refreshToken;
+  //   const anHourBeforeTokenExpires = expires - 3600000;
 
-      return NextResponse.redirect(
-        new URL(
-          `/api/auth/refresh?token=${refreshToken}`,
-          request.url,
-        ).toString(),
-      );
-    }
-  }
+  //   if (now >= anHourBeforeTokenExpires) {
+  //     const refreshToken = session.refreshToken;
 
-  if (!session && request.nextUrl.pathname !== "/") {
-    return NextResponse.redirect(new URL("/", request.url).toString());
-  }
+  //     return NextResponse.redirect(
+  //       new URL(
+  //         `/api/auth/refresh?token=${refreshToken}`,
+  //         request.url,
+  //       ).toString(),
+  //     );
+  //   }
+  // }
+
+  // if (!session && request.nextUrl.pathname !== "/") {
+  //   return NextResponse.redirect(new URL("/", request.url).toString());
+  // }
 
   if (
     request.nextUrl.pathname === "/reports" &&
@@ -40,14 +45,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/", request.url).toString());
   }
 
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("x-url", request.url);
+  // const requestHeaders = new Headers(request.headers);
+  // requestHeaders.set("x-url", request.url);
 
-  return NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  });
+  return NextResponse.next();
 }
 
 export const config = {

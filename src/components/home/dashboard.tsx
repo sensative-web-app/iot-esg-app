@@ -9,8 +9,6 @@ export const Dashboard = async ({
   session: SessionData;
   nodes: any[];
 }) => {
-  console.log(session.accessToken);
-
   return (
     <div className="w-full">
       {session.role === "tenant" && (
