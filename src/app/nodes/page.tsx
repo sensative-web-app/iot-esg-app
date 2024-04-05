@@ -7,9 +7,5 @@ export default async function Index() {
   const accessToken = session!.accessToken;
   const nodes = await getNodes(accessToken!);
 
-  return (
-    <div className="text-primary flex min-h-[calc(100vh-64px)]  w-full flex-col items-center pt-12">
-      {nodes && <NodeTable nodes={nodes} />}
-    </div>
-  );
+  return <div className="">{nodes && <NodeTable nodes={nodes} />}</div>;
 }

@@ -1,7 +1,7 @@
 import { getSession } from "@/actions";
 import Link from "next/link";
 import { Logout } from "@/components/auth/logout";
-import { NavMenu } from "./nav-menu";
+
 import Image from "next/image";
 import Logo from "../../../public/sensativehd.png";
 
@@ -13,7 +13,7 @@ export async function NavBar({
 
   return (
     <div
-      className={` border-b-primary/30 flex h-16 items-center justify-between border-b px-4`}
+      className={` border-b-shadow flex h-16 items-center justify-between border-b px-4`}
       data-cy="navbar"
       {...props}
     >
@@ -22,7 +22,7 @@ export async function NavBar({
           className="flex cursor-pointer flex-row text-center"
           href="https://sensative.com"
         >
-          <div className="bg-primary rounded-xl p-1">
+          <div className="rounded-xl bg-primary p-1">
             <Image
               priority={true}
               className=""
@@ -34,18 +34,16 @@ export async function NavBar({
           </div>
         </Link>
         <Link className="flex cursor-pointer flex-row text-center" href="/">
-          <h3 className="text-primary items-center pl-2 text-center text-2xl ">
+          <h3 className="items-center pl-2 text-center text-2xl text-primary ">
             app name
           </h3>
         </Link>
       </div>
 
-      <NavMenu role={session?.role ? session.role : ""} />
-
       <div className="flex flex-row items-center justify-center">
         {session?.role === "property owner" && (
           <Link
-            className="text-primary hover:text-primary/80 duration-250 transition-colors"
+            className="duration-250 text-primary transition-colors hover:text-primary/80"
             href={"/reports"}
           >
             reports

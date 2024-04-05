@@ -8,11 +8,15 @@ import { redirect } from "next/navigation";
 export const get = async () => {};
 
 export const getSession = async () => {
+  "use server";
   let session = await getIronSession<SessionData>(cookies(), sessionOptions);
-
   const now = Date.now();
   const expires = new Date(session?.expires!).getTime() - 3600000;
   const refreshExpires = new Date(session?.refreshExpires!).getTime() - 3600000;
+
+  if (now >= expires) {
+    return undefined;
+  }
 
   if (
     Object.keys(session).length === 0 ||
@@ -20,8 +24,7 @@ export const getSession = async () => {
     !session?.accessToken ||
     !session?.refreshToken ||
     !session?.expires ||
-    !session?.refreshExpires ||
-    now >= expires
+    !session?.refreshExpires
   ) {
     return undefined;
   }
@@ -117,7 +120,6 @@ export const getUser = async (session: SessionData) => {
     );
 
     user = await response.json();
-    console.log("user: ", user);
   } catch (error: any) {
     console.log(error);
     return undefined;
@@ -330,6 +332,7 @@ export const getNodeStats = async (
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
+    cache: "no-store",
   });
 
   const stats = await response.json();

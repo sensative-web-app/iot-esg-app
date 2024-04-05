@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
 import "./globals.css";
-import { NavBar } from "@/components/nav/navbar";
+import { Nav } from "@/components/nav/nav";
 
 export const metadata: Metadata = {
   title: "Sensative web-app",
@@ -16,11 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={GeistSans.className} suppressHydrationWarning>
       <body className={""}>
-        <NavBar />
-
-        <main className="flex min-h-[calc(100vh-64px)] flex-col">
-          {children}
-        </main>
+        <Nav>{children}</Nav>
       </body>
     </html>
   );

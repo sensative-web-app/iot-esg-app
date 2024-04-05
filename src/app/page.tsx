@@ -11,7 +11,7 @@ export default async function Index() {
 
   if (!session) {
     return (
-      <div className="text-primary flex h-[calc(100vh-64px)]  justify-center">
+      <div className="flex w-full   text-primary">
         <Login />
       </div>
     );
@@ -21,7 +21,7 @@ export default async function Index() {
   const nodes = await getNodes(accessToken!);
 
   return (
-    <div className="text-primary flex h-[calc(100vh-64px)]  justify-center">
+    <div className="flex h-[calc(100vh-64px)] justify-center  text-primary">
       <Dashboard nodes={nodes} session={session!} />
     </div>
   );
