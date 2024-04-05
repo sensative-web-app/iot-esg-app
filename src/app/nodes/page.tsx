@@ -7,5 +7,7 @@ export default async function Index() {
   const accessToken = session!.accessToken;
   const nodes = await getNodes(accessToken!);
 
-  return <div className="">{nodes && <NodeTable nodes={nodes} />}</div>;
+  return (
+    <div className="h-full w-full">{nodes && <NodeTable nodes={nodes} />}</div>
+  );
 }

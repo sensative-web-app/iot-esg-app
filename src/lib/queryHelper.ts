@@ -1,8 +1,9 @@
 import { getNodeStats } from "@/actions";
 
-export const fetchElectricityData = async (
+export const fetchChartData = async (
   accessToken: string,
   range: string,
+  chart: string,
 ) => {
   const currentTimestamp = Date.now();
   let startTime;
@@ -36,6 +37,131 @@ export const fetchElectricityData = async (
       axisBottomTickValues = { unit: "day", stepSize: 1 };
   }
 
+  const xAxisOptions = {
+    type: "time",
+    time: {
+      unit: axisBottomTickValues.unit,
+      displayFormats: {
+        [axisBottomTickValues.unit]: axisBottomFormat,
+      },
+      stepSize: axisBottomTickValues.stepSize,
+    },
+  };
+
+  switch (chart) {
+    case "electricityChart":
+      return fetchElectricityData(
+        accessToken,
+        startTime,
+        currentTimestamp,
+        distance,
+        xAxisOptions,
+      );
+    case "temperatureChart":
+      return fetchTemperatureData(accessToken, startTime, xAxisOptions);
+
+    case "co2Chart":
+      return fetchCo2Data(
+        accessToken,
+        startTime,
+        currentTimestamp,
+        distance,
+        xAxisOptions,
+      );
+    //return fetchTemperatureData(accessToken, range);
+  }
+};
+
+export const fetchCo2Data = async (
+  accessToken: string,
+  startTime: number,
+  currentTimestamp: number,
+  distance: number,
+  xAxisOptions: any,
+) => {
+  console.log(startTime);
+  const co2Data = await getNodeStats(
+    accessToken,
+    "6234b61cd68c97000897fca9",
+    "co2",
+    startTime,
+    currentTimestamp,
+    distance,
+  );
+
+  const formattedData = formatData(co2Data);
+
+  const labels = formattedData.map((item: any) => item.x.toISOString());
+  const values = formattedData.map((item: any) => item.y.toFixed(0));
+
+  const data = {
+    labels: labels,
+    datasets: [
+      {
+        label: "Co2",
+        data: values,
+        borderColor: "rgb(75, 192, 192)",
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        yAxisID: "y",
+      },
+    ],
+  };
+
+  return { data, xAxisOptions };
+};
+
+export const fetchTemperatureData = async (
+  accessToken: string,
+  startTime: number,
+  xAxisOptions: any,
+) => {
+  console.log(startTime);
+  const temperatureData = await getNodeStats(
+    accessToken,
+    "60a3ab8b007e8f00076009eb",
+    "temperature",
+    startTime,
+  );
+  console.log(temperatureData);
+
+  const start = new Date(startTime);
+
+  // Filter the `temperatureData` array based on the `startDate`
+  const filteredData = temperatureData.filter((data: any) => {
+    const time = new Date(data.time);
+
+    return time >= start;
+  });
+  // console.log("filteredData", filteredData);
+
+  const formattedData = formatData(filteredData);
+  // console.log("formattedData", formattedData);
+  const labels = formattedData.map((item: any) => item.x.toISOString());
+  const values = formattedData.map((item: any) => item.y);
+
+  const data = {
+    labels: labels,
+    datasets: [
+      {
+        label: "Temperature",
+        data: values,
+        borderColor: "rgb(75, 192, 192)",
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        yAxisID: "y",
+      },
+    ],
+  };
+
+  return { data, xAxisOptions };
+};
+
+export const fetchElectricityData = async (
+  accessToken: string,
+  startTime: number,
+  currentTimestamp: number,
+  distance: number,
+  xAxisOptions: any,
+) => {
   const incrementalConsumptionData = await fetchElectricityConsumptioneData({
     accessToken,
     startTime,
@@ -49,9 +175,6 @@ export const fetchElectricityData = async (
     currentTimestamp,
     distance,
   });
-
-  // console.log("consumption data: ", incrementalConsumptionData.length);
-  // console.log("price data: ", electricityPriceData!.length);
 
   const labels = incrementalConsumptionData.map((item: any) =>
     item.x.toISOString(),
@@ -79,17 +202,6 @@ export const fetchElectricityData = async (
     ],
   };
 
-  const xAxisOptions = {
-    type: "time",
-    time: {
-      unit: axisBottomTickValues.unit,
-      displayFormats: {
-        [axisBottomTickValues.unit]: axisBottomFormat,
-      },
-      stepSize: axisBottomTickValues.stepSize,
-    },
-  };
-
   return { data, xAxisOptions };
 };
 
@@ -113,19 +225,19 @@ const fetchElectricityPriceData = async ({
     distance,
   );
 
-  const formatData = (rawElectricityPriceData: any) => {
-    let data = [];
-
-    for (let i = 0; i < rawElectricityPriceData.length; i++) {
-      data.push({
-        x: new Date(rawElectricityPriceData[i].time),
-        y: rawElectricityPriceData[i].value,
-      });
-    }
-    return data;
-  };
-
   return formatData(rawElectricityPriceData);
+};
+
+const formatData = (rawData: any) => {
+  let data = [];
+
+  for (let i = 0; i < rawData.length; i++) {
+    data.push({
+      x: new Date(rawData[i].time),
+      y: rawData[i].value,
+    });
+  }
+  return data;
 };
 
 const fetchElectricityConsumptioneData = async ({

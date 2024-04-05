@@ -1,6 +1,10 @@
 export interface SessionData {
   accessToken: string;
   role?: string;
+  userID?: string;
+  setID?: string;
+  co2NodeID?: string;
+  temperatureNodeID?: string;
 }
 
 export const sessionOptions = {

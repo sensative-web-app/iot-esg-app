@@ -1,7 +1,7 @@
 import { getIronSession } from "iron-session";
 import { SessionData, sessionOptions } from "@/lib/session";
 import { NextResponse } from "next/server";
-import { getRole } from "@/actions";
+import { getBasicCredentialSet, getNodes, getRole, getUser } from "@/actions";
 import { cookies } from "next/headers";
 
 export async function POST(request: Request) {
@@ -34,19 +34,25 @@ export async function POST(request: Request) {
       sessionOptions,
     );
     const { token } = data;
+    const user = await getUser(token);
+    const set = await getBasicCredentialSet(user._id, token);
+    const nodes = await getNodes(token);
+
+    const temperatureNode = nodes.find((node: any) =>
+      node.name.includes("Comfort"),
+    );
+    const co2Node = nodes.find((node: any) => node.name.includes("CO2"));
+
     session.accessToken = token;
+    session.userID = user._id;
+    session.setID = set._id;
+    session.co2NodeID = co2Node._id;
+    session.temperatureNodeID = temperatureNode._id;
 
     const role = await getRole(token);
     if (role) session.role = role;
 
     await session.save();
-
-    const redirectUrl = `${process.env.APP_URL}/settings`;
-
-    console.log(redirectUrl);
-
-    // return NextResponse.redirect(redirectUrl);
-    // console.log("session i endpoint", session);
 
     return NextResponse.json({ status: 200 });
   } catch (error: any) {

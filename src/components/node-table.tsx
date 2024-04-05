@@ -2,7 +2,6 @@
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableFooter,
   TableHead,
@@ -20,37 +19,34 @@ export const NodeTable = ({ nodes }: { nodes: any }) => {
   };
 
   return (
-    <div>
+    <div className="w-full h-full flex justify-center ">
       {selectedNode ? (
         <Node node={selectedNode} exitFn={() => setSelectedNode(null)} />
       ) : (
-        <Table className="">
-          <TableCaption className="mb-6">
-            A list of IoT Nodes in the network.
-          </TableCaption>
-          <TableFooter>
-            <TableRow>
-              <TableHead>Total nodes</TableHead>
-              <TableHead></TableHead>
-              <TableHead></TableHead>
-              <TableHead></TableHead>
-
-              <TableCell className="text-right">{nodes.length}</TableCell>
-            </TableRow>
-          </TableFooter>
-          <TableHeader>
-            <TableRow className="text-center">
-              <TableHead className="text-start">Node name</TableHead>
-              <TableHead className="text-start">Device model</TableHead>
-              <TableHead className="text-center">Battery</TableHead>
-              <TableHead className="text-center">Reported at</TableHead>
-              <TableHead className="text-center">Created at</TableHead>
+        <Table className="gap-1">
+          <TableHeader className="h-full">
+            <TableRow className="text-center h-full">
+              <TableHead className="text-start text-gray-300">
+                Node name
+              </TableHead>
+              <TableHead className="text-start text-gray-300">
+                Device model
+              </TableHead>
+              <TableHead className="text-center text-gray-300">
+                Battery
+              </TableHead>
+              <TableHead className="text-center text-gray-300">
+                Reported at
+              </TableHead>
+              <TableHead className="text-center text-gray-300">
+                Created at
+              </TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody className="text-gray-300">
+          <TableBody className="text-gray-400 h-full ">
             {nodes.map((node: any) => (
               <TableRow key={node._id}>
-                <TableCell className="font-medium hover:cursor-pointer hover:underline">
+                <TableCell className="font-medium hover:cursor-pointer hover:underline hover:text-gray-300">
                   <div onClick={() => handleNodeClick(node)}>{node.name}</div>
                 </TableCell>
 

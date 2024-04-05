@@ -26,8 +26,8 @@ ChartJS.register(
   TimeScale,
 );
 
-const ElectricityChart = ({ data }: { data: any }) => {
-  // console.log(electricityConsumptionData);
+const TemperatureChart = ({ data }: { data: any }) => {
+  console.log(data);
   const chartData = data.data;
   const xAxisOptions = data.xAxisOptions;
 
@@ -42,19 +42,7 @@ const ElectricityChart = ({ data }: { data: any }) => {
         beginAtZero: true,
         title: {
           display: true,
-          text: "Consumption",
-        },
-      },
-      y1: {
-        type: "linear" as const,
-        display: true,
-        position: "right" as const,
-        grid: {
-          drawOnChartArea: false,
-        },
-        title: {
-          display: true,
-          text: "Price",
+          text: "Temperature",
         },
       },
     },
@@ -64,7 +52,7 @@ const ElectricityChart = ({ data }: { data: any }) => {
       },
       title: {
         display: true,
-        text: "Electricity Consumption x Price",
+        text: "Temperature",
       },
     },
   };
@@ -76,4 +64,4 @@ const ElectricityChart = ({ data }: { data: any }) => {
   );
 };
 
-export default ElectricityChart;
+export default TemperatureChart;

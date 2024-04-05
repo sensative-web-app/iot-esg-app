@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { getSession, logout } from "@/actions";
+import { getSession } from "@/actions";
 
 export async function middleware(request: NextRequest) {
   if (
@@ -10,33 +10,10 @@ export async function middleware(request: NextRequest) {
   }
 
   let session = await getSession();
-  // if (!session?.accessToken) {
-  //   return NextResponse.redirect(new URL("/", request.url).toString());
-  // }
 
-  // console.log(session);
-
-  // if (session && session.refreshToken && session.expires) {
-  //   const now = Date.now();
-  //   const expires = new Date(session.expires).getTime();
-
-  //   const anHourBeforeTokenExpires = expires - 3600000;
-
-  //   if (now >= anHourBeforeTokenExpires) {
-  //     const refreshToken = session.refreshToken;
-
-  //     return NextResponse.redirect(
-  //       new URL(
-  //         `/api/auth/refresh?token=${refreshToken}`,
-  //         request.url,
-  //       ).toString(),
-  //     );
-  //   }
-  // }
-
-  // if (!session && request.nextUrl.pathname !== "/") {
-  //   return NextResponse.redirect(new URL("/", request.url).toString());
-  // }
+  if (Object.keys(session).length === 0 && request.nextUrl.pathname !== "/") {
+    return NextResponse.redirect(new URL("/", request.url).toString());
+  }
 
   if (
     request.nextUrl.pathname === "/reports" &&
@@ -44,9 +21,6 @@ export async function middleware(request: NextRequest) {
   ) {
     return NextResponse.redirect(new URL("/", request.url).toString());
   }
-
-  // const requestHeaders = new Headers(request.headers);
-  // requestHeaders.set("x-url", request.url);
 
   return NextResponse.next();
 }

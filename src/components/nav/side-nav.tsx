@@ -5,7 +5,6 @@ import { Menu, Package2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ReactQueryClientProvider } from "../query-provider";
-import { SessionData } from "@/lib/session";
 import { usePathname } from "next/navigation";
 
 export function SideNav({

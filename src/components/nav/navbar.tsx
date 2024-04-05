@@ -50,7 +50,11 @@ export async function NavBar({
           </Link>
         )}
 
-        {session ? <Logout /> : <div className="mr-2 h-[40px] w-[174px]"></div>}
+        {Object.keys(session).length !== 0 ? (
+          <Logout />
+        ) : (
+          <div className="mr-2 h-[40px] w-[174px]"></div>
+        )}
       </div>
     </div>
   );

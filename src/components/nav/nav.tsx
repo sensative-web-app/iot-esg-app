@@ -13,7 +13,7 @@ export async function Nav({ children }: { children: React.ReactNode }) {
       options = [
         "Dashboard",
         "Temperature",
-        "CO2",
+        "Co2",
         "Electricity",
         "Nodes",
         "Settings",

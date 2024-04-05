@@ -9,9 +9,7 @@ import ChartWrapper from "./chart-wrapper";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuLabel,
   DropdownMenuCheckboxItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
@@ -25,13 +23,13 @@ const componentConfig = [
 export const TenantDashboard = ({
   token,
   nodes,
-  user,
-  set,
+  userID,
+  setID,
 }: {
   token: string;
   nodes: any[];
-  user: any;
-  set: any;
+  userID: string | undefined;
+  setID: string | undefined;
 }) => {
   const [visibleComponents, setVisibleComponents] = useState(
     componentConfig.map((config) => config.visible),
@@ -70,30 +68,33 @@ export const TenantDashboard = ({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="flex w-full justify-center mt-10 gap-16 ">
+      <div className="flex w-full justify-center pt-6 gap-16 ">
         {visibleComponents[0] && (
           <Temperature
-            nodeID={"60a3ab8b007e8f00076009eb"}
+            nodeID={temperatureNode._id}
             currentValue={temperatureNode.temperature}
             reportedAt={temperatureNode.reportedAt}
-            setID={set._id}
-            userID={user._id}
+            setID={setID!}
+            userID={userID!}
           />
         )}
         {visibleComponents[1] && (
           <Co2
-            nodeID={"6234b61cd68c97000897fca9"}
+            nodeID={co2Node._id}
             currentValue={co2Node.co2}
             reportedAt={co2Node.reportedAt}
-            setID={set._id}
-            userID={user._id}
+            setID={setID!}
+            userID={userID!}
           />
         )}
       </div>
       <div className="w-full h-full justify-center">
         {visibleComponents[2] && (
           <div className="w-full h-full justify-center">
-            <ChartWrapper accessToken={token!} />
+            <ChartWrapper
+              chart="electricityChart"
+              accessToken={token!}
+            ></ChartWrapper>
           </div>
         )}
       </div>

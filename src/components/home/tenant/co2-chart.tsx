@@ -26,8 +26,8 @@ ChartJS.register(
   TimeScale,
 );
 
-const ElectricityChart = ({ data }: { data: any }) => {
-  // console.log(electricityConsumptionData);
+const Co2Chart = ({ data }: { data: any }) => {
+  console.log(data);
   const chartData = data.data;
   const xAxisOptions = data.xAxisOptions;
 
@@ -42,38 +42,17 @@ const ElectricityChart = ({ data }: { data: any }) => {
         beginAtZero: true,
         title: {
           display: true,
-          text: "Consumption",
+          text: "Co2",
         },
-      },
-      y1: {
-        type: "linear" as const,
-        display: true,
-        position: "right" as const,
-        grid: {
-          drawOnChartArea: false,
-        },
-        title: {
-          display: true,
-          text: "Price",
-        },
-      },
-    },
-    plugins: {
-      legend: {
-        position: "top" as const,
-      },
-      title: {
-        display: true,
-        text: "Electricity Consumption x Price",
       },
     },
   };
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full text-2xl h-full">
       <Line data={chartData} options={options} />
     </div>
   );
 };
 
-export default ElectricityChart;
+export default Co2Chart;

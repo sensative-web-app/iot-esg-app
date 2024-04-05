@@ -1,7 +1,7 @@
 "use client";
 
-import { QueryCache, QueryClient, useQuery } from "@tanstack/react-query";
-import { fetchElectricityData } from "@/lib/queryHelper";
+import { QueryClient, useQuery } from "@tanstack/react-query";
+import { fetchChartData } from "@/lib/queryHelper";
 import ElectricityChart from "./electricity-chart";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,17 +17,25 @@ import React, { useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { ErrorBoundary } from "react-error-boundary";
+import TemperatureChart from "./temperature-chart";
+import Co2Chart from "./co2-chart";
 
-export default function ChartWrapper({ accessToken }: { accessToken: string }) {
+export default function ChartWrapper({
+  accessToken,
+  chart,
+}: {
+  accessToken: string;
+  chart: string;
+}) {
   const [selectedRange, setSelectedRange] = useState("7d");
   const queryClient = new QueryClient();
   let { data, isLoading, refetch } = useQuery({
-    queryKey: ["consumptionData", selectedRange],
-    queryFn: () => fetchElectricityData(accessToken, selectedRange),
+    queryKey: [`${chart}`, selectedRange],
+    queryFn: () => fetchChartData(accessToken, selectedRange, chart),
   });
 
   const handleRangeChange = async (range: string) => {
-    queryClient.invalidateQueries({ queryKey: ["consumptionData", range] });
+    queryClient.invalidateQueries({ queryKey: [`${chart}`, range] });
     setSelectedRange(range);
     const refetchedData = await refetch();
     data = refetchedData.data;
@@ -56,7 +64,7 @@ export default function ChartWrapper({ accessToken }: { accessToken: string }) {
             </DropdownMenuRadioGroup>
           </DropdownMenuContent>
           <DropdownMenuTrigger asChild>
-            <Button className="justify-end">Select Range</Button>
+            <Button className="justify-end">Select range</Button>
           </DropdownMenuTrigger>
         </DropdownMenu>
       </div>
@@ -65,7 +73,10 @@ export default function ChartWrapper({ accessToken }: { accessToken: string }) {
         <Skeleton className="mt-6 ml-6 w-[750px] h-[350px] rounded-xl" />
       ) : (
         <ErrorBoundary fallback={<div>Something went wrong</div>}>
-          <ElectricityChart data={data} />
+          {chart === "electricityChart" && <ElectricityChart data={data} />}
+          {chart === "co2Chart" && <Co2Chart data={data} />}
+
+          {/* {chart === "temperatureChart" && <TemperatureChart data={data} />} */}
         </ErrorBoundary>
       )}
     </div>
