@@ -36,19 +36,19 @@ export const fetchElectricityData = async (
       axisBottomTickValues = { unit: "day", stepSize: 1 };
   }
 
-  const incrementalConsumptionData = await fetchElectricityConsumptioneData(
+  const incrementalConsumptionData = await fetchElectricityConsumptioneData({
     accessToken,
     startTime,
     currentTimestamp,
     distance,
-  );
+  });
 
-  const electricityPriceData = await fetchElectricityPriceData(
+  const electricityPriceData = await fetchElectricityPriceData({
     accessToken,
     startTime,
     currentTimestamp,
     distance,
-  );
+  });
 
   console.log("consumption data: ", incrementalConsumptionData.length);
   console.log("price data: ", electricityPriceData!.length);
@@ -93,12 +93,17 @@ export const fetchElectricityData = async (
   return { data, xAxisOptions };
 };
 
-const fetchElectricityPriceData = async (
+const fetchElectricityPriceData = async ({
   accessToken,
   startTime,
   currentTimestamp,
   distance,
-) => {
+}: {
+  accessToken: string;
+  startTime: number;
+  currentTimestamp: number;
+  distance: number;
+}) => {
   const rawElectricityPriceData = await getNodeStats(
     accessToken,
     "61e7fd68cb490600097a03cc",
@@ -123,12 +128,17 @@ const fetchElectricityPriceData = async (
   return formatData(rawElectricityPriceData);
 };
 
-const fetchElectricityConsumptioneData = async (
+const fetchElectricityConsumptioneData = async ({
   accessToken,
   startTime,
   currentTimestamp,
   distance,
-) => {
+}: {
+  accessToken: string;
+  startTime: number;
+  currentTimestamp: number;
+  distance: number;
+}) => {
   const rawElectricityConsumptionData = await getNodeStats(
     accessToken,
     "65e830e40d1c07d883f0af86",
