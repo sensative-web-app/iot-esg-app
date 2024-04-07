@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
 import "./globals.css";
-import { Nav } from "@/components/nav/nav";
+
+import { NavBar } from "@/components/nav/navbar";
 
 export const metadata: Metadata = {
   title: "Sensative web-app",
@@ -10,13 +11,18 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en" className={GeistSans.className} suppressHydrationWarning>
-      <body className={""}>
-        <Nav>{children}</Nav>
+    <html
+      lang="en"
+      className={` ${GeistSans.className}`}
+      suppressHydrationWarning
+    >
+      <body className={"h-full"}>
+        <NavBar />
+        {children}
       </body>
     </html>
   );

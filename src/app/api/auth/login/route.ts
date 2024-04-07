@@ -27,12 +27,11 @@ export async function POST(request: Request) {
     }
     const data = await response.json();
 
-    console.log("data", data);
-
     const session = await getIronSession<SessionData>(
       cookies(),
       sessionOptions,
     );
+
     const { token } = data;
     const user = await getUser(token);
     const set = await getBasicCredentialSet(user._id, token);
@@ -48,9 +47,10 @@ export async function POST(request: Request) {
     session.setID = set._id;
     session.co2NodeID = co2Node._id;
     session.temperatureNodeID = temperatureNode._id;
+    session.expire = new Date().getTime() + 1000 * 60 * 60 * 5;
 
     const role = await getRole(token);
-    if (role) session.role = role;
+    session.role = role ? role : "not assigned";
 
     await session.save();
 

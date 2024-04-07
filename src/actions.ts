@@ -1,7 +1,7 @@
 "use server";
 
 import { SessionData, sessionOptions } from "./lib/session";
-import { getIronSession } from "iron-session";
+import { IronSession, getIronSession } from "iron-session";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -9,6 +9,12 @@ export const get = async () => {};
 
 export const getSession = async () => {
   let session = await getIronSession<SessionData>(cookies(), sessionOptions);
+
+  const now = new Date().getTime();
+  if (Object.keys(session).length > 0 && now > session.expire) {
+    session = {} as IronSession<SessionData>;
+  }
+
   return session;
 };
 

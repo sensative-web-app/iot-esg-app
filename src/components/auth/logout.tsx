@@ -3,9 +3,9 @@ import { Button } from "@/components/ui/button";
 
 export const Logout = () => {
   return (
-    <form action={logout}>
-      <div className="mr-2 flex h-[40px] w-[174px] justify-end">
-        <Button className="rounded-xl">log out</Button>
+    <form action={logout} className="">
+      <div className=" flex h-[40px] p-2 pt-0">
+        <Button className="rounded-xl text-base w-full">log out</Button>
       </div>
     </form>
   );

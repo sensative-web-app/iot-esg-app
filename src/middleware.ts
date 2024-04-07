@@ -11,16 +11,19 @@ export async function middleware(request: NextRequest) {
 
   let session = await getSession();
 
-  if (Object.keys(session).length === 0 && request.nextUrl.pathname !== "/") {
-    return NextResponse.redirect(new URL("/", request.url).toString());
+  if (
+    Object.keys(session).length === 0 &&
+    request.nextUrl.pathname !== "/login"
+  ) {
+    return NextResponse.redirect(new URL("/login", request.url).toString());
   }
 
-  if (
-    request.nextUrl.pathname === "/reports" &&
-    session?.role !== "property owner"
-  ) {
-    return NextResponse.redirect(new URL("/", request.url).toString());
-  }
+  // if (
+  //   request.nextUrl.pathname === "/reports" &&
+  //   session?.role !== "property owner"
+  // ) {
+  //   return NextResponse.redirect(new URL("/", request.url).toString());
+  // }
 
   return NextResponse.next();
 }
