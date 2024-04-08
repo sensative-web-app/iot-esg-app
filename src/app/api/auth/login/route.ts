@@ -6,7 +6,7 @@ import { cookies } from "next/headers";
 
 export async function POST(request: Request) {
   const { username, password } = await request.json();
-
+  console.log(username, password);
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_YGGIO_API_URL}/auth/local`,
@@ -19,6 +19,7 @@ export async function POST(request: Request) {
       },
     );
 
+    console.log("response", response.status);
     if (!response.ok) {
       if (response.statusText === "Unauthorized") {
         throw new Error("Invalid credentials");
@@ -26,6 +27,7 @@ export async function POST(request: Request) {
       throw new Error("Something went wrong");
     }
     const data = await response.json();
+    console.log("data", data);
 
     const session = await getIronSession<SessionData>(
       cookies(),

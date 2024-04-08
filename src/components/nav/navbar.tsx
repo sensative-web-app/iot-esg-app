@@ -9,21 +9,21 @@ export async function NavBar() {
       data-cy="navbar"
     >
       <div className="flex flex-initial flex-row items-center gap-2 ">
-        <Link
-          className="flex cursor-pointer flex-row text-center"
-          href="https://sensative.com"
-        >
-          <div className="rounded-xl bg-primary p-1">
+        <div className="rounded-xl bg-primary p-1">
+          <Link
+            className="flex cursor-pointer flex-row text-center"
+            href="https://sensative.com"
+          >
             <Image
-              priority={true}
               className=""
               src={Logo}
               alt="Sensative Logo"
               width={36}
               height={36}
             />
-          </div>
-        </Link>
+          </Link>
+        </div>
+
         <Link className="flex cursor-pointer flex-row text-center" href="/">
           <h3 className="items-center pl-2 text-center text-2xl text-primary ">
             app name

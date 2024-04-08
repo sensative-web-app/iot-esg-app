@@ -35,16 +35,16 @@ export const Co2 = ({
       password: "super-secret-password",
     });
 
-    client.on("connect", () => {
-      console.log("Connecting to MQTT broker");
-      client.subscribe(topic, (err) => {
-        if (err) {
-          console.error("Failed to subscribe to topic", err);
-        } else {
-          console.log(`Subscribed to topic: ${topic}`);
-        }
-      });
-    });
+    // client.on("connect", () => {
+    //   // console.log("Connecting to MQTT broker");
+    //   client.subscribe(topic, (err) => {
+    //     // if (err) {
+    //     //   console.error("Failed to subscribe to topic", err);
+    //     // } else {
+    //     //   console.log(`Subscribed to topic: ${topic}`);
+    //     // }
+    //   });
+    // });
 
     client.on("message", (topic, message) => {
       const { iotnode } = JSON.parse(message.toString());
@@ -57,7 +57,7 @@ export const Co2 = ({
     });
 
     return () => {
-      console.log("Disconnecting from MQTT broker");
+      // console.log("Disconnecting from MQTT broker");
       client.end();
     };
   }, [nodeID, setID, userID]);
