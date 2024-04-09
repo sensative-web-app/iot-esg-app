@@ -10,7 +10,7 @@ export default async function Index() {
   let session = await getSession();
 
   return (
-    <div className="flex h-[calc(100vh-64px)] justify-center  text-primary">
+    <div className="flex justify-center  text-primary">
       <SideNav role={session.role}>
         <Dashboard session={session!} />
       </SideNav>

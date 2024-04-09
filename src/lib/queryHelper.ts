@@ -1,4 +1,4 @@
-import { getNodeStats } from "@/actions";
+import { getNode, getNodeStats } from "@/actions";
 
 export const fetchChartData = async (
   accessToken: string,
@@ -68,6 +68,7 @@ export const fetchChartData = async (
         distance,
         xAxisOptions,
       );
+
     //return fetchTemperatureData(accessToken, range);
   }
 };
@@ -126,16 +127,13 @@ export const fetchTemperatureData = async (
 
   const start = new Date(startTime);
 
-  // Filter the `temperatureData` array based on the `startDate`
   const filteredData = temperatureData.filter((data: any) => {
     const time = new Date(data.time);
 
     return time >= start;
   });
-  // console.log("filteredData", filteredData);
 
   const formattedData = formatData(filteredData);
-  // console.log("formattedData", formattedData);
   const labels = formattedData.map((item: any) => item.x.toISOString());
   const values = formattedData.map((item: any) => item.y);
 
@@ -275,4 +273,11 @@ const fetchElectricityConsumptioneData = async ({
   };
 
   return calculateIncrementalConsumption(rawElectricityConsumptionData);
+};
+
+export const fetchAirQualityData = async (token: string, id: string) => {
+  const node = await getNode(token, id);
+
+  console.log(node);
+  return node;
 };

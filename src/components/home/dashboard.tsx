@@ -4,7 +4,7 @@ import { TenantDashboard } from "./tenant/tenant-dashboard";
 import { getNodes } from "@/actions";
 
 export const Dashboard = async ({ session }: { session: SessionData }) => {
-  const { accessToken, userID, setID } = session!;
+  const { accessToken, userID } = session!;
   const nodes = await getNodes(session.accessToken);
 
   return (
@@ -13,7 +13,7 @@ export const Dashboard = async ({ session }: { session: SessionData }) => {
         <TenantDashboard
           nodes={nodes}
           userID={userID!}
-          setID={setID!}
+          setID={process.env.NEXT_PUBLIC_SET_ID!}
           token={accessToken!}
         />
       )}

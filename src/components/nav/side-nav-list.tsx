@@ -8,7 +8,7 @@ import { MdOutlineSensors } from "react-icons/md";
 import {
   MdDashboard,
   MdThermostat,
-  MdCo2,
+  MdAir,
   MdElectricalServices,
   MdDevices,
   MdSettings,
@@ -19,7 +19,7 @@ export function SideNavList({ options }: { options: string[] }) {
   const iconMap: Record<string, React.ReactNode> = {
     Dashboard: <MdDashboard />,
     Temperature: <MdThermostat />,
-    Co2: <MdCo2 />,
+    Air: <MdAir />,
     Electricity: <MdElectricalServices />,
     Nodes: <MdDevices />,
     Settings: <MdSettings />,

@@ -1,12 +1,20 @@
 import { getIronSession } from "iron-session";
 import { SessionData, sessionOptions } from "@/lib/session";
 import { NextResponse } from "next/server";
-import { getBasicCredentialSet, getNodes, getRole, getUser } from "@/actions";
+import {
+  createBasicCredentialsSet,
+  createChannel,
+  getBasicCredentialSet,
+  getChannels,
+  getNodes,
+  getRole,
+  getUser,
+} from "@/actions";
 import { cookies } from "next/headers";
 
 export async function POST(request: Request) {
   const { username, password } = await request.json();
-  console.log(username, password);
+
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_YGGIO_API_URL}/auth/local`,
@@ -19,15 +27,13 @@ export async function POST(request: Request) {
       },
     );
 
-    console.log("response", response.status);
     if (!response.ok) {
-      if (response.statusText === "Unauthorized") {
+      if (response.status === 401) {
         throw new Error("Invalid credentials");
       }
       throw new Error("Something went wrong");
     }
     const data = await response.json();
-    console.log("data", data);
 
     const session = await getIronSession<SessionData>(
       cookies(),
@@ -36,23 +42,19 @@ export async function POST(request: Request) {
 
     const { token } = data;
     const user = await getUser(token);
-    const set = await getBasicCredentialSet(user._id, token);
     const nodes = await getNodes(token);
-
-    const temperatureNode = nodes.find((node: any) =>
-      node.name.includes("Comfort"),
-    );
-    const co2Node = nodes.find((node: any) => node.name.includes("CO2"));
 
     session.accessToken = token;
     session.userID = user._id;
-    session.setID = set._id;
-    session.co2NodeID = co2Node._id;
-    session.temperatureNodeID = temperatureNode._id;
+
+    session.nodes = nodes.map((node: any) => ({
+      name: node.name,
+      id: node._id,
+    }));
     session.expire = new Date().getTime() + 1000 * 60 * 60 * 5;
 
     const role = await getRole(token);
-    session.role = role ? role : "not assigned";
+    session.role = role ? role : "tenant";
 
     await session.save();
 

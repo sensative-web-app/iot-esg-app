@@ -56,7 +56,7 @@ function getNavOptions(role: string) {
       options = [
         "Dashboard",
         "Temperature",
-        "Co2",
+        "Air",
         "Electricity",
         "Nodes",
         "Settings",

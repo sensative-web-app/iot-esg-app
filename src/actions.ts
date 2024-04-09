@@ -39,6 +39,7 @@ export const getNodes = async (token: string) => {
         },
       },
     );
+    console.log(response);
     nodes = await response.json();
   } catch (e) {
     console.log(e);
@@ -64,6 +65,7 @@ export const getNode = async (token: string, nodeID: string) => {
       },
     );
     node = await response.json();
+    console.log(node);
   } catch (e) {
     console.log(e);
     return undefined;
@@ -160,17 +162,20 @@ export const createBasicCredentialsSet = async (id: string, token: string) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: `user-${id}`,
+          username: `iot-esg-app-set`,
           password: "super-secret-password",
         }),
       },
     );
+    console.log(response);
 
     if (response.status === 404) {
       return undefined;
     }
 
     credentials = await response.json();
+
+    console.log(credentials);
   } catch (error: any) {
     console.log("e", error.message);
 
@@ -217,11 +222,7 @@ export const getBasicCredentialsSets = async (token: string) => {
 
   return credentials;
 };
-export const createChannel = async (
-  token: string,
-  nodeID: string,
-  basicCredentialsSetId: string,
-) => {
+export const createChannel = async (token: string, nodeID: string) => {
   let response;
   let channel;
 
@@ -235,11 +236,11 @@ export const createChannel = async (
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: "iot-esg-app-test",
+          name: "iot-esg-app-channel",
           iotnode: nodeID,
           mqtt: {
             type: "basicCredentialsSet",
-            recipient: basicCredentialsSetId,
+            recipient: process.env.NEXT_PUBLIC_SET_ID,
           },
         }),
       },

@@ -19,7 +19,7 @@ export default async function Index() {
 
   return (
     <SideNav role={session.role}>
-      <div className="text-primary flex h-[calc(100vh-64px)] flex-col items-center">
+      <div className="text-primary  flex-col items-center">
         <div className="mt-12">
           <RadioGroup defaultValue="option-one">
             <Label className="text-xl text-gray-300" htmlFor="option-one">

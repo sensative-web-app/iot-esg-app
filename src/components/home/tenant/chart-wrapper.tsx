@@ -17,8 +17,8 @@ import React, { useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { ErrorBoundary } from "react-error-boundary";
-import TemperatureChart from "./temperature-chart";
-import Co2Chart from "./co2-chart";
+
+import Chart from "./chart";
 
 export default function ChartWrapper({
   accessToken,
@@ -42,8 +42,8 @@ export default function ChartWrapper({
   };
 
   return (
-    <div className="flex-col w-full  px-48">
-      <div className=" flex w-full justify-end mr-4">
+    <div className="flex-col w-full justify-center items-center">
+      <div className=" flex justify-end mr-48">
         <DropdownMenu>
           <DropdownMenuContent>
             <DropdownMenuLabel>Select Range</DropdownMenuLabel>
@@ -70,13 +70,27 @@ export default function ChartWrapper({
       </div>
 
       {isLoading ? (
-        <Skeleton className="mt-6 ml-6 w-[750px] h-[350px] rounded-xl" />
+        <div className="flex justify-center items-center w-full">
+          <div className="w-2/3">
+            <Skeleton className="mt-6 ml-6 w-[720px] h-[350px] rounded-xl" />
+          </div>
+        </div>
       ) : (
         <ErrorBoundary fallback={<div>Something went wrong</div>}>
-          {chart === "electricityChart" && <ElectricityChart data={data} />}
-          {chart === "co2Chart" && <Co2Chart data={data} />}
+          <div className="flex justify-center items-center w-full">
+            <div className="w-2/3">
+              {chart === "electricityChart" && <ElectricityChart data={data} />}
+              {chart === "co2Chart" && <Chart data={data} text={"Co2"} />}
 
-          {/* {chart === "temperatureChart" && <TemperatureChart data={data} />} */}
+              {chart === "temperatureChart" && (
+                <Chart data={data} text={"Temperature"} />
+              )}
+
+              {chart === "electricityConsumptionChart" && (
+                <Chart data={data} text={"Consumption"} />
+              )}
+            </div>
+          </div>
         </ErrorBoundary>
       )}
     </div>

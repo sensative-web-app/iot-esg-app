@@ -26,8 +26,7 @@ ChartJS.register(
   TimeScale,
 );
 
-const TemperatureChart = ({ data }: { data: any }) => {
-  console.log(data);
+const Chart = ({ data, text }: { data: any; text: string }) => {
   const chartData = data.data;
   const xAxisOptions = data.xAxisOptions;
 
@@ -42,26 +41,17 @@ const TemperatureChart = ({ data }: { data: any }) => {
         beginAtZero: true,
         title: {
           display: true,
-          text: "Temperature",
+          text: text,
         },
-      },
-    },
-    plugins: {
-      legend: {
-        position: "top" as const,
-      },
-      title: {
-        display: true,
-        text: "Temperature",
       },
     },
   };
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full text-2xl h-full">
       <Line data={chartData} options={options} />
     </div>
   );
 };
 
-export default TemperatureChart;
+export default Chart;

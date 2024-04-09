@@ -1,8 +1,5 @@
 "use client";
 
-import { Temperature } from "./temperature";
-import { Co2 } from "./co2";
-
 import { useState } from "react";
 
 import ChartWrapper from "./chart-wrapper";
@@ -13,10 +10,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { SensorCard } from "./sensor-card";
 
 const componentConfig = [
-  { name: "Temperature", component: Temperature, visible: true },
-  { name: "Co2", component: Co2, visible: true },
+  { name: "Temperature", component: SensorCard, visible: true },
+  { name: "Co2", component: SensorCard, visible: true },
   { name: "Electricity chart", component: ChartWrapper, visible: true },
 ];
 
@@ -68,29 +66,33 @@ export const TenantDashboard = ({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="flex w-full justify-center pt-6 gap-16 ">
+      <div className="flex w-full justify-center items-center pt-6 gap-16 ">
         {visibleComponents[0] && (
-          <Temperature
+          <SensorCard
             nodeID={temperatureNode._id}
             currentValue={temperatureNode.temperature}
             reportedAt={temperatureNode.reportedAt}
             setID={setID!}
             userID={userID!}
+            sensorType="temperature"
+            sensorUnit="°C"
           />
         )}
         {visibleComponents[1] && (
-          <Co2
+          <SensorCard
             nodeID={co2Node._id}
             currentValue={co2Node.co2}
             reportedAt={co2Node.reportedAt}
             setID={setID!}
             userID={userID!}
+            sensorType="co2"
+            sensorUnit="ppm"
           />
         )}
       </div>
-      <div className="w-full h-full justify-center">
+      <div className="w-full h-full justify-center items-center">
         {visibleComponents[2] && (
-          <div className="w-full h-full justify-center">
+          <div className="w-full h-full justify-center items-center">
             <ChartWrapper
               chart="electricityChart"
               accessToken={token!}
