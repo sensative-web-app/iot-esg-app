@@ -1,22 +1,25 @@
-import { getSession, getNodes } from "@/actions";
+import { getSession } from "@/actions";
 import { SideNav } from "@/components/nav/side-nav";
 import { NodeTable } from "@/components/node-table";
-import { redirect } from "next/navigation";
+import { fetchNodes } from "@/lib/queryHelper";
+import { QueryClient } from "@tanstack/react-query";
 
 export default async function Index() {
   const session = await getSession();
 
-  if (Object.keys(session).length === 0) {
-    return redirect("/login");
-  }
-
   const accessToken = session!.accessToken;
-  const nodes = await getNodes(accessToken!);
+
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: ["nodes"],
+    queryFn: () => fetchNodes(session.accessToken),
+  });
 
   return (
     <SideNav role={session.role}>
       <div className="h-full w-full">
-        {nodes && <NodeTable nodes={nodes} />}
+        <NodeTable token={accessToken} />
       </div>
     </SideNav>
   );

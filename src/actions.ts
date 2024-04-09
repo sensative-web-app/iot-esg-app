@@ -39,7 +39,6 @@ export const getNodes = async (token: string) => {
         },
       },
     );
-    console.log(response);
     nodes = await response.json();
   } catch (e) {
     console.log(e);
@@ -65,7 +64,6 @@ export const getNode = async (token: string, nodeID: string) => {
       },
     );
     node = await response.json();
-    console.log(node);
   } catch (e) {
     console.log(e);
     return undefined;

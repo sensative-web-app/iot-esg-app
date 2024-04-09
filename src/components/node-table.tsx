@@ -10,9 +10,16 @@ import {
 } from "@/components/ui/table";
 import { useState } from "react";
 import { Node } from "./node";
+import { fetchNodes } from "@/lib/queryHelper";
+import { useQuery } from "@tanstack/react-query";
 
-export const NodeTable = ({ nodes }: { nodes: any }) => {
+export const NodeTable = ({ token }: { token: string }) => {
   const [selectedNode, setSelectedNode] = useState(null);
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["nodes"],
+    queryFn: () => fetchNodes(token),
+  });
 
   const handleNodeClick = (node: any) => {
     setSelectedNode(node);
@@ -44,25 +51,26 @@ export const NodeTable = ({ nodes }: { nodes: any }) => {
             </TableRow>
           </TableHeader>
           <TableBody className="text-gray-400 h-full ">
-            {nodes.map((node: any) => (
-              <TableRow key={node._id}>
-                <TableCell className="font-medium hover:cursor-pointer hover:underline hover:text-gray-300">
-                  <div onClick={() => handleNodeClick(node)}>{node.name}</div>
-                </TableCell>
+            {!isLoading &&
+              data.map((node: any) => (
+                <TableRow key={node._id}>
+                  <TableCell className="font-medium hover:cursor-pointer hover:underline hover:text-gray-300">
+                    <div onClick={() => handleNodeClick(node)}>{node.name}</div>
+                  </TableCell>
 
-                <TableCell>{node.deviceModelName}</TableCell>
-                <TableCell className="text-center">
-                  {node.batteryLevel}
-                </TableCell>
+                  <TableCell>{node.deviceModelName}</TableCell>
+                  <TableCell className="text-center">
+                    {node.batteryLevel}
+                  </TableCell>
 
-                <TableCell className="text-right">
-                  {new Date(node.reportedAt).toLocaleString("en-GB")}
-                </TableCell>
-                <TableCell className="text-right">
-                  {new Date(node.createdAt).toLocaleString("en-GB")}
-                </TableCell>
-              </TableRow>
-            ))}
+                  <TableCell className="text-right">
+                    {new Date(node.reportedAt).toLocaleString("en-GB")}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {new Date(node.createdAt).toLocaleString("en-GB")}
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       )}

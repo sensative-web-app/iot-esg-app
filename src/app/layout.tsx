@@ -3,6 +3,8 @@ import { GeistSans } from "geist/font/sans";
 import "./globals.css";
 
 import { NavBar } from "@/components/nav/navbar";
+import Providers from "./providers";
+import { ReactQueryClientProvider } from "@/components/query-provider";
 
 export const metadata: Metadata = {
   title: "Sensative web-app",
@@ -22,7 +24,8 @@ export default function RootLayout({
     >
       <body className={"h-full"}>
         <NavBar />
-        {children}
+        <Providers>{children}</Providers>
+        {/* <ReactQueryClientProvider>{children}</ReactQueryClientProvider> */}
       </body>
     </html>
   );

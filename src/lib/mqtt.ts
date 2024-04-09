@@ -1,12 +1,7 @@
 import { useEffect } from "react";
 import mqtt from "mqtt";
 
-export const useMqtt = (
-  setID: string,
-  nodeID: string,
-  userID: string,
-  onMessage: Function,
-) => {
+export const useMqtt = (setID: string, nodeID: string, onMessage: Function) => {
   useEffect(() => {
     const topic = `yggio/output/v2/${setID}/iotnode/${nodeID}`;
     const client = mqtt.connect(process.env.NEXT_PUBLIC_YGGIO_MQTT_URL!, {
@@ -32,5 +27,5 @@ export const useMqtt = (
       console.log("Disconnecting from MQTT broker");
       client.end();
     };
-  }, [setID, nodeID, userID, onMessage]);
+  }, [setID, nodeID, onMessage]);
 };

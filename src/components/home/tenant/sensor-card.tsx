@@ -11,7 +11,7 @@ export const SensorCard = ({
   reportedAt,
   currentValue,
   setID,
-  userID,
+
   sensorType,
   sensorUnit,
 }: {
@@ -19,7 +19,7 @@ export const SensorCard = ({
   reportedAt: string;
   currentValue: number;
   setID: string;
-  userID: string;
+
   sensorType: string;
   sensorUnit: string;
 }) => {
@@ -50,7 +50,7 @@ export const SensorCard = ({
     setReportedTime(reportedAt);
   };
 
-  useMqtt(setID, nodeID, userID, onMessage);
+  useMqtt(setID, nodeID, onMessage);
 
   const formattedReportedTime = formatDistanceToNow(new Date(reportedTime), {
     addSuffix: true,

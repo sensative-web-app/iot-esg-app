@@ -5,7 +5,7 @@ import { SensorCard } from "@/components/home/tenant/sensor-card";
 
 export default async function Index() {
   const session = await getSession();
-  const { accessToken, userID, nodes } = session;
+  const { accessToken, nodes } = session;
 
   const tempNodeID = nodes.find((node: any) =>
     node.name.includes("Comfort"),
@@ -23,7 +23,7 @@ export default async function Index() {
               currentValue={node.temperature}
               reportedAt={node.reportedAt}
               setID={process.env.NEXT_PUBLIC_SET_ID!}
-              userID={userID!}
+              // userID={userID!}
               sensorType="temperature"
               sensorUnit="°C"
             />

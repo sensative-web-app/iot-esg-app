@@ -4,15 +4,23 @@ import { getNodes, getSession } from "@/actions";
 import { SideNav } from "@/components/nav/side-nav";
 import { SensorCard } from "@/components/home/tenant/sensor-card";
 import { AirGauge } from "@/components/home/tenant/air-gauge";
+import { fetchNodes } from "@/lib/queryHelper";
+import { QueryClient } from "@tanstack/react-query";
 
 export default async function Index() {
   const session = await getSession();
-  const { accessToken, userID } = session;
+  const { accessToken } = session;
 
-  const allNodes = await getNodes(accessToken!);
+  const queryClient = new QueryClient();
 
+  await queryClient.prefetchQuery({
+    queryKey: ["nodes"],
+    queryFn: () => fetchNodes(session.accessToken),
+  });
   let airNode;
   let co2Node;
+
+  const allNodes = await getNodes(session.accessToken);
 
   if (allNodes.length > 0) {
     airNode = allNodes.find((node: any) => node.name.includes("Air"));
@@ -31,7 +39,7 @@ export default async function Index() {
               reportedAt={co2Node.reportedAt}
               currentValue={co2Node.co2}
               setID={process.env.NEXT_PUBLIC_SET_ID!}
-              userID={userID!}
+              // userID={userID!}
               sensorType="co2"
               sensorUnit="ppm"
             />

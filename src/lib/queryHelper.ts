@@ -1,4 +1,4 @@
-import { getNode, getNodeStats } from "@/actions";
+import { getNode, getNodeStats, getNodes } from "@/actions";
 
 export const fetchChartData = async (
   accessToken: string,
@@ -278,6 +278,11 @@ const fetchElectricityConsumptioneData = async ({
 export const fetchAirQualityData = async (token: string, id: string) => {
   const node = await getNode(token, id);
 
-  console.log(node);
   return node;
 };
+
+export async function fetchNodes(token: string) {
+  const nodes = await getNodes(token);
+
+  return nodes;
+}

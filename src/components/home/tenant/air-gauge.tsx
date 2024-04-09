@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function AirGauge({ token, id }: { token: string; id: string }) {
   let { data, isLoading } = useQuery({
-    queryKey: [`iaq`],
+    queryKey: [`iaq`, token, id],
     queryFn: () => fetchAirQualityData(token, id),
   });
 
@@ -34,7 +34,7 @@ export function AirGauge({ token, id }: { token: string; id: string }) {
       ) : (
         <GaugeComponent
           id="air-quality-gauge"
-          value={data.output.iaq}
+          value={data.output.air_iaq}
           maxValue={maxAirQuality}
           arc={{
             subArcs: airQualityRanges,

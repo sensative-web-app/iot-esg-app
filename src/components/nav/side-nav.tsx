@@ -1,7 +1,3 @@
-import Link from "next/link";
-
-import { ReactQueryClientProvider } from "../query-provider";
-
 import { Logout } from "../auth/logout";
 import { SideNavList } from "./side-nav-list";
 import { ErrorBoundary } from "react-error-boundary";
@@ -34,15 +30,13 @@ export function SideNav({
         </div>
       )}
       <div className="flex flex-col">
-        <ReactQueryClientProvider>
-          <main
-            className={`w-full min-h-[calc(100vh-64px)] ${role === undefined ? "mt-32 " : ""}`}
-          >
-            <ErrorBoundary fallback={<div>an error has occurred</div>}>
-              {children}
-            </ErrorBoundary>
-          </main>
-        </ReactQueryClientProvider>
+        <main
+          className={`w-full min-h-[calc(100vh-64px)] ${role === undefined ? "mt-32 " : ""}`}
+        >
+          <ErrorBoundary fallback={<div>an error has occurred</div>}>
+            {children}
+          </ErrorBoundary>
+        </main>
       </div>
     </div>
   );

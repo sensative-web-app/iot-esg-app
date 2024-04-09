@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { SensorCard } from "./sensor-card";
+import { useQuery } from "@tanstack/react-query";
+import { fetchNodes } from "@/lib/queryHelper";
 
 const componentConfig = [
   { name: "Temperature", component: SensorCard, visible: true },
@@ -20,18 +22,21 @@ const componentConfig = [
 
 export const TenantDashboard = ({
   token,
-  nodes,
-  userID,
+
   setID,
 }: {
   token: string;
-  nodes: any[];
-  userID: string | undefined;
-  setID: string | undefined;
+
+  setID: string;
 }) => {
   const [visibleComponents, setVisibleComponents] = useState(
     componentConfig.map((config) => config.visible),
   );
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["nodes"],
+    queryFn: () => fetchNodes(token),
+  });
 
   // Function to toggle component visibility
   const toggleComponentVisibility = (index: number) => {
@@ -41,8 +46,10 @@ export const TenantDashboard = ({
       return updatedVisibility;
     });
   };
-  const temperatureNode = nodes.find((node) => node.name.includes("Comfort"));
-  const co2Node = nodes.find((node) => node.name.includes("CO2"));
+  const temperatureNode = data.find((node: any) =>
+    node.name.includes("Comfort"),
+  );
+  const co2Node = data.find((node: any) => node.name.includes("CO2"));
 
   return (
     <div className="flex flex-col h-full w-full justify-center gap-8">
@@ -67,24 +74,22 @@ export const TenantDashboard = ({
         </DropdownMenu>
       </div>
       <div className="flex w-full justify-center items-center pt-6 gap-16 ">
-        {visibleComponents[0] && (
+        {visibleComponents[0] && !isLoading && (
           <SensorCard
             nodeID={temperatureNode._id}
             currentValue={temperatureNode.temperature}
             reportedAt={temperatureNode.reportedAt}
             setID={setID!}
-            userID={userID!}
             sensorType="temperature"
             sensorUnit="°C"
           />
         )}
-        {visibleComponents[1] && (
+        {visibleComponents[1] && !isLoading && (
           <SensorCard
             nodeID={co2Node._id}
             currentValue={co2Node.co2}
             reportedAt={co2Node.reportedAt}
             setID={setID!}
-            userID={userID!}
             sensorType="co2"
             sensorUnit="ppm"
           />

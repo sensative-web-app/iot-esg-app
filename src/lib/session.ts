@@ -1,7 +1,7 @@
 export interface SessionData {
   accessToken: string;
   role: string;
-  userID: string;
+  // userID: string;
   nodes: { name: string; id: string }[];
   expire: number;
 }

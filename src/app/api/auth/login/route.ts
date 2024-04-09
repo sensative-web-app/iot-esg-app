@@ -1,15 +1,7 @@
 import { getIronSession } from "iron-session";
 import { SessionData, sessionOptions } from "@/lib/session";
 import { NextResponse } from "next/server";
-import {
-  createBasicCredentialsSet,
-  createChannel,
-  getBasicCredentialSet,
-  getChannels,
-  getNodes,
-  getRole,
-  getUser,
-} from "@/actions";
+import { getNodes, getRole } from "@/actions";
 import { cookies } from "next/headers";
 
 export async function POST(request: Request) {
@@ -41,11 +33,11 @@ export async function POST(request: Request) {
     );
 
     const { token } = data;
-    const user = await getUser(token);
+    // const user = await getUser(token);
     const nodes = await getNodes(token);
 
     session.accessToken = token;
-    session.userID = user._id;
+    // session.userID = user._id;
 
     session.nodes = nodes.map((node: any) => ({
       name: node.name,
