@@ -70,7 +70,7 @@ const ElectricityChart = ({ data }: { data: any }) => {
   };
 
   return (
-    <div className="w-full h-full">
+    <div className=" h-full">
       <Line data={chartData} options={options} />
     </div>
   );

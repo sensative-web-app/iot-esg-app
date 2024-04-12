@@ -34,8 +34,6 @@ export default function ChartWrapper({
     queryFn: () => fetchChartData(accessToken, selectedRange, chart),
   });
 
-  console.log("data, chartWrapper: ", data, chart);
-
   const handleRangeChange = async (range: string) => {
     queryClient.invalidateQueries({ queryKey: [`${chart}`, range] });
     setSelectedRange(range);
@@ -45,49 +43,45 @@ export default function ChartWrapper({
 
   return (
     <div className="flex-col w-full justify-center items-center">
-      <div className=" flex justify-end mr-48">
-        <DropdownMenu>
-          <DropdownMenuContent>
-            <DropdownMenuLabel>Select Range</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuRadioGroup
-              value={selectedRange}
-              onValueChange={handleRangeChange}
-            >
-              <DropdownMenuRadioItem value="24h">
-                Last 24 Hours
-              </DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value="7d">
-                Last 7 Days
-              </DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value="30d">
-                Last 30 Days
-              </DropdownMenuRadioItem>
-            </DropdownMenuRadioGroup>
-          </DropdownMenuContent>
-          <DropdownMenuTrigger asChild>
-            <Button className="justify-end">Select range</Button>
-          </DropdownMenuTrigger>
-        </DropdownMenu>
+      <div className="w-full flex items-center justify-center mb-4">
+        <div className="w-[800px] flex justify-end">
+          <DropdownMenu>
+            <DropdownMenuContent>
+              <DropdownMenuLabel>Select Range</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuRadioGroup
+                value={selectedRange}
+                onValueChange={handleRangeChange}
+              >
+                <DropdownMenuRadioItem value="24h">
+                  Last 24 Hours
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="7d">
+                  Last 7 Days
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="30d">
+                  Last 30 Days
+                </DropdownMenuRadioItem>
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+            <DropdownMenuTrigger asChild>
+              <Button className="">Select range</Button>
+            </DropdownMenuTrigger>
+          </DropdownMenu>
+        </div>
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center items-center w-full">
-          <div className="w-2/3">
-            <Skeleton className="mt-6 ml-6 w-[720px] h-[350px] rounded-xl" />
-          </div>
-        </div>
+        <Skeleton className="mt-6 ml-6 rounded-xl w-[775px] h-[400px] mx-auto" />
       ) : (
         <ErrorBoundary fallback={<div>Something went wrong</div>}>
-          <div className="flex justify-center items-center w-full">
-            <div className="w-2/3">
+          <div className="flex justify-center items-center w-full h-full">
+            <div className="h-[400px] w-[800px]">
               {chart === "electricityChart" && <ElectricityChart data={data} />}
               {chart === "co2Chart" && <Chart data={data} text={"Co2"} />}
-
               {chart === "temperatureChart" && (
                 <Chart data={data} text={"Temperature"} />
               )}
-
               {chart === "electricityConsumptionChart" && (
                 <Chart data={data} text={"Consumption"} />
               )}
