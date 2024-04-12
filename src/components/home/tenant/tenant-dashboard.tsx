@@ -18,6 +18,7 @@ const componentConfig = [
   { name: "Temperature", component: SensorCard, visible: true },
   { name: "Co2", component: SensorCard, visible: true },
   { name: "Electricity chart", component: ChartWrapper, visible: true },
+  { name: "Water chart", component: ChartWrapper, visible: true },
 ];
 
 export const TenantDashboard = ({
@@ -100,6 +101,14 @@ export const TenantDashboard = ({
           <div className="w-full h-full justify-center items-center">
             <ChartWrapper
               chart="electricityChart"
+              accessToken={token!}
+            ></ChartWrapper>
+          </div>
+        )}
+        {visibleComponents[3] && (
+          <div className="w-full h-full justify-center items-center my-10">
+            <ChartWrapper
+              chart="waterChart"
               accessToken={token!}
             ></ChartWrapper>
           </div>

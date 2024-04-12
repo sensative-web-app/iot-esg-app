@@ -52,6 +52,7 @@ function getNavOptions(role: string) {
         "Temperature",
         "Air",
         "Electricity",
+        "Water",
         "Nodes",
         "Settings",
       ];

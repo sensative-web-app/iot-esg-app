@@ -12,6 +12,7 @@ import {
   MdElectricalServices,
   MdDevices,
   MdSettings,
+  MdWaterDrop,
 } from "react-icons/md";
 
 export function SideNavList({ options }: { options: string[] }) {
@@ -21,6 +22,7 @@ export function SideNavList({ options }: { options: string[] }) {
     Temperature: <MdThermostat />,
     Air: <MdAir />,
     Electricity: <MdElectricalServices />,
+    Water: <MdWaterDrop />,
     Nodes: <MdDevices />,
     Settings: <MdSettings />,
   };

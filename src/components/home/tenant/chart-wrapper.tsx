@@ -19,6 +19,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorBoundary } from "react-error-boundary";
 
 import Chart from "./chart";
+import WaterChart from "./water-chart";
 
 export default function ChartWrapper({
   accessToken,
@@ -82,6 +83,10 @@ export default function ChartWrapper({
               {chart === "temperatureChart" && (
                 <Chart data={data} text={"Temperature"} />
               )}
+               {chart === "waterChart" && (
+                <WaterChart data={data} text={"Water Consumption"} />
+              )}
+
               {chart === "electricityConsumptionChart" && (
                 <Chart data={data} text={"Consumption"} />
               )}

@@ -19,7 +19,10 @@ export const fetchChartData = async (
       axisBottomTickValues = { unit: "hour", stepSize: 1 };
       break;
     case "7d":
-      startTime = currentTimestamp - 7 * 24 * 60 * 60 * 1000; // Last 7 days
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // Set to 00:00 local time so get data from start of the day and not 24 hours from now
+      const startOfSevenDaysAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000); // Set to 00:00 of 7 days ago
+      startTime = startOfSevenDaysAgo.getTime();
       distance = 3600; // 1 hour in seconds
       axisBottomFormat = "EEE";
       axisBottomTickValues = { unit: "day", stepSize: 1 };
@@ -78,6 +81,14 @@ export const fetchChartData = async (
         xAxisOptions,
       );
 
+    case "waterChart":
+      return fetchWaterData(
+        accessToken,
+        startTime,
+        currentTimestamp,
+        range === "7d" ? 86400 : distance,
+        xAxisOptions,
+      );
     //return fetchTemperatureData(accessToken, range);
   }
 };
@@ -125,7 +136,7 @@ export const fetchTemperatureData = async (
   startTime: number,
   xAxisOptions: any,
 ) => {
-  console.log(startTime);
+  // console.log(startTime);
   const temperatureData = await getNodeStats(
     accessToken,
     "60a3ab8b007e8f00076009eb",
@@ -328,3 +339,95 @@ export async function fetchNodes(token: string) {
 
   return nodes;
 }
+
+export const fetchWaterData = async (
+  accessToken: string,
+  startTime: number,
+  currentTimestamp: number,
+  distance: number,
+  xAxisOptions: any,
+) => {
+  const cWaterData = await getNodeStats(
+    accessToken,
+    "65e831450d1c07d883f0af94",
+    "currentVolume",
+    startTime,
+    currentTimestamp,
+    distance,
+  );
+
+  const wWaterData = await getNodeStats(
+    accessToken,
+    "65e831800d1c07d883f0af9d",
+    "currentVolume",
+    startTime,
+    currentTimestamp,
+    distance,
+  );
+console.log(cWaterData)
+  const incrementalData = [];
+  for (let i = 1; i < cWaterData.length; i++) {
+    const prevValue = cWaterData[i - 1].value;
+    const currentValue = cWaterData[i].value;
+    const consumptionDiff = currentValue - prevValue;
+    const xValue = distance === 86400 ? new Date(cWaterData[i - 1].time).toISOString().split('T')[0] : new Date(cWaterData[i - 1].time);
+    incrementalData.push({
+      x: xValue,
+      y: consumptionDiff,
+    });
+  }
+console.log(incrementalData)
+  const incrementalDataW = [];
+  for (let i = 1; i < wWaterData.length; i++) {
+    const prevValue = wWaterData[i - 1].value;
+    const currentValue = wWaterData[i].value;
+    const consumptionDiff = currentValue - prevValue;
+    const xValue = distance === 86400 ? new Date(wWaterData[i - 1].time).toISOString().split('T')[0] : new Date(wWaterData[i - 1].time);
+    incrementalDataW.push({
+      x: xValue,
+      y: consumptionDiff,
+    });
+  }
+
+  const combinedData: { x: Date | string, y: number }[] = [];
+  for (let i = 0; i < incrementalData.length; i++) {
+    combinedData.push({
+      x: incrementalData[i].x,
+      y: incrementalData[i].y + incrementalDataW[i].y,
+    });
+  }
+
+  const labels = incrementalData.map((item: any) => item.x);
+
+  const data = {
+    labels: labels,
+    datasets: [
+      {
+        label: "Total consumption",
+        data: combinedData.map((item: any) => item.y),
+        borderColor: "rgb(255, 255, 0)",
+        backgroundColor: "rgba(82, 246, 59, 0.2)",
+        yAxisID: "y",
+      },
+      {
+        label: "Cold water",
+        data: incrementalData.map((item: any) => item.y),
+        borderColor: "rgb(75, 192, 192)",
+        backgroundColor: "rgba(170, 225, 233, 0.7)",
+        yAxisID: "y",
+      },
+      {
+        label: "Warm water",
+        data: incrementalDataW.map((item: any) => item.y),
+        borderColor: "rgb(192, 75, 192)",
+        backgroundColor: "rgba(255, 115, 115, 0.7)",
+        yAxisID: "y",
+      }
+    ],
+  };
+
+  return { data, xAxisOptions };
+};
+
+
+
