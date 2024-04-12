@@ -18,12 +18,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url).toString());
   }
 
-  // if (
-  //   request.nextUrl.pathname === "/reports" &&
-  //   session?.role !== "property owner"
-  // ) {
-  //   return NextResponse.redirect(new URL("/", request.url).toString());
-  // }
+  if (
+    request.nextUrl.pathname === "/reports" &&
+    session?.role !== "property-owner"
+  ) {
+    return NextResponse.redirect(new URL("/", request.url).toString());
+  }
 
   return NextResponse.next();
 }

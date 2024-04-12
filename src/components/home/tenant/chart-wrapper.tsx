@@ -34,6 +34,8 @@ export default function ChartWrapper({
     queryFn: () => fetchChartData(accessToken, selectedRange, chart),
   });
 
+  console.log("data, chartWrapper: ", data, chart);
+
   const handleRangeChange = async (range: string) => {
     queryClient.invalidateQueries({ queryKey: [`${chart}`, range] });
     setSelectedRange(range);

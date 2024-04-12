@@ -69,6 +69,15 @@ export const fetchChartData = async (
         xAxisOptions,
       );
 
+    case "electricityConsumptionChart":
+      return fetchElectricityConsumption(
+        accessToken,
+        startTime,
+        currentTimestamp,
+        distance,
+        xAxisOptions,
+      );
+
     //return fetchTemperatureData(accessToken, range);
   }
 };
@@ -160,7 +169,7 @@ export const fetchElectricityData = async (
   distance: number,
   xAxisOptions: any,
 ) => {
-  const incrementalConsumptionData = await fetchElectricityConsumptioneData({
+  const incrementalConsumptionData = await fetchConsumptioneData({
     accessToken,
     startTime,
     currentTimestamp,
@@ -238,7 +247,7 @@ const formatData = (rawData: any) => {
   return data;
 };
 
-const fetchElectricityConsumptioneData = async ({
+const fetchConsumptioneData = async ({
   accessToken,
   startTime,
   currentTimestamp,
@@ -273,6 +282,39 @@ const fetchElectricityConsumptioneData = async ({
   };
 
   return calculateIncrementalConsumption(rawElectricityConsumptionData);
+};
+
+export const fetchElectricityConsumption = async (
+  accessToken: string,
+  startTime: number,
+  currentTimestamp: number,
+  distance: number,
+  xAxisOptions: any,
+) => {
+  const consumptionData = await fetchConsumptioneData({
+    accessToken,
+    startTime,
+    currentTimestamp,
+    distance,
+  });
+
+  const labels = consumptionData.map((item: any) => item.x.toISOString());
+  const values = consumptionData.map((item: any) => item.y.toFixed(0));
+
+  const data = {
+    labels: labels,
+    datasets: [
+      {
+        label: "Electricity Consumption",
+        data: values,
+        borderColor: "rgb(75, 192, 192)",
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        yAxisID: "y",
+      },
+    ],
+  };
+
+  return { data, xAxisOptions };
 };
 
 export const fetchAirQualityData = async (token: string, id: string) => {

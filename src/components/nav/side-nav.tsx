@@ -13,7 +13,7 @@ export function SideNav({
   return (
     <div
       className={`
-        grid w-full ${role !== undefined ? "md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]" : ""}
+        grid w-full ${role !== undefined ? "md:grid-cols-[280px_1fr] lg:grid-cols-[280px_1fr]" : ""}
 
         `}
     >
@@ -56,15 +56,8 @@ function getNavOptions(role: string) {
         "Settings",
       ];
       break;
-    case "property owner":
-      options = [
-        "Dashboard",
-        "Properties",
-        "Tenants",
-        "Maintenance",
-        "Billing",
-        "Settings",
-      ];
+    case "property-owner":
+      options = ["Dashboard", "Reports", "Properties", "Tenants", "Settings"];
       break;
     case "property manager":
       options = [
