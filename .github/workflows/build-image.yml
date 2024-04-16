@@ -121,3 +121,13 @@ jobs:
           cypress_username: LNU_hyresgast_1
           cypress_password: ${{ secrets.CYPRESS_PASSWORD }}
         run: cypress run
+
+      - name: Archive test artifacts
+        if: '!cancelled()'
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: |
+            cypress/screenshots
+            cypress/videos
+          if-no-files-found: ignore
