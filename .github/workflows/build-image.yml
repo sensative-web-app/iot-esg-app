@@ -57,6 +57,8 @@ jobs:
             org.opencontainers.image.revision=${{ github.sha }}
           containerfiles: |
             ./Dockerfile
+          extra-args: |
+            --ulimit nofile=8192
 
       - name: Log in to the GitHub Container registry
         uses: redhat-actions/podman-login@v1
