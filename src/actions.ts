@@ -165,7 +165,7 @@ export const createBasicCredentialsSet = async (id: string, token: string) => {
         }),
       },
     );
-    console.log(response);
+   // console.log(response);
 
     if (response.status === 404) {
       return undefined;

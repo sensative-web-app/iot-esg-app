@@ -143,7 +143,7 @@ export const fetchTemperatureData = async (
     "temperature",
     startTime,
   );
-  console.log(temperatureData);
+  // console.log(temperatureData);
 
   const start = new Date(startTime);
 
@@ -364,7 +364,7 @@ export const fetchWaterData = async (
     currentTimestamp,
     distance,
   );
-console.log(cWaterData)
+// console.log(cWaterData)
   const incrementalData = [];
   for (let i = 1; i < cWaterData.length; i++) {
     const prevValue = cWaterData[i - 1].value;
@@ -376,7 +376,7 @@ console.log(cWaterData)
       y: consumptionDiff,
     });
   }
-console.log(incrementalData)
+ // console.log(incrementalData)
   const incrementalDataW = [];
   for (let i = 1; i < wWaterData.length; i++) {
     const prevValue = wWaterData[i - 1].value;
