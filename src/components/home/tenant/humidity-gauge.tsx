@@ -5,9 +5,6 @@ import React, { Suspense, useState } from 'react';
 const GaugeComponent = dynamic(() => import("react-gauge-component"), {
     ssr: false,
 });
-import { useQuery } from "@tanstack/react-query";
-import { fetchAirQualityData } from "@/lib/queryHelper";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useMqtt } from "@/lib/mqtt";
 import { ErrorBoundary } from "react-error-boundary";
 import { Card } from "@/components/ui/card";

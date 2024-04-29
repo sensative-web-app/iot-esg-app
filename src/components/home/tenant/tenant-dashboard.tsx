@@ -11,11 +11,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { SensorCard } from "./sensor-card";
+import { HumidityGauge } from "./humidity-gauge";
 import { useQuery } from "@tanstack/react-query";
 import { fetchNodes } from "@/lib/queryHelper";
 
 const componentConfig = [
   { name: "Temperature", component: SensorCard, visible: true },
+  { name: "Humidity", component: HumidityGauge, visible: true },
   { name: "Co2", component: SensorCard, visible: true },
   { name: "Electricity chart", component: ChartWrapper, visible: true },
   { name: "Water chart", component: ChartWrapper, visible: true },
@@ -86,6 +88,14 @@ export const TenantDashboard = ({
           />
         )}
         {visibleComponents[1] && !isLoading && (
+          <HumidityGauge
+            nodeID={temperatureNode._id}
+            currentValue={temperatureNode.humidityRelative}
+            setID={setID!}
+            sensorType="humidityRelative"
+          />
+        )}
+        {visibleComponents[2] && !isLoading && (
           <SensorCard
             nodeID={co2Node._id}
             currentValue={co2Node.co2}
@@ -97,7 +107,7 @@ export const TenantDashboard = ({
         )}
       </div>
       <div className="w-full h-full justify-center items-center">
-        {visibleComponents[2] && (
+        {visibleComponents[3] && (
           <div className="w-full h-full justify-center items-center">
             <ChartWrapper
               chart="electricityChart"
@@ -105,7 +115,7 @@ export const TenantDashboard = ({
             ></ChartWrapper>
           </div>
         )}
-        {visibleComponents[3] && (
+        {visibleComponents[4] && (
           <div className="w-full h-full justify-center items-center my-10">
             <ChartWrapper
               chart="waterChart"
