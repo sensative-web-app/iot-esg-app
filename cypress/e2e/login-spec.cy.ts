@@ -1,3 +1,6 @@
+/**
+ * Spec requirements: A01
+ */
 describe("login flow", () => {
   it("successfully logs in and redirects back with a session", () => {
     cy.visit(Cypress.env("localhost_url"));
