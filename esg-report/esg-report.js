@@ -13,7 +13,42 @@ async function main() {
   let api = await login(username, password)
 
   console.log(await api.getReportBases())
-  console.log(await api.uploadReportTemplate("test.xlsx", fileData))
+
+  let uploaded = await api.uploadReportTemplate("test.xlsx", fileData)
+  console.log(uploaded)
+
+  let spec = reportBaseSpec(uploaded.filename)
+  console.log(await api.createReportBase(spec))
+
+  console.log(await api.getReportBases())
+}
+
+function reportBaseSpec(filename) {
+  // Docs: https://staging.yggio.net/docs/report/
+  return {
+    "name": "Henrik's test report",
+    "description": "Based on the example report from Sensative",
+    "fileName": filename,
+    "secondsBetweenPoints": 0,
+    "sources": [
+      {
+        "valueFunction": "mean",
+        "query": "rssi",
+        "fields": [
+          {
+            "name": "rssi",
+            "prettyName": "Rssi",
+            "dataType": "float"
+          },
+          {
+            "name": "snr",
+            "prettyName": "SNR",
+            "dataType": "float"
+          }
+        ]
+      }
+    ]
+  }
 }
 
 async function login(username, password) {
@@ -48,14 +83,21 @@ async function login(username, password) {
   token = (await request("auth/local", {username, password})).token
 
   return {
-    getReportBases: request.bind(null, "reports/report-bases"),
-    uploadReportTemplate(filename, buffer) {
+    async getReportBases() {
+      return await request("reports/report-bases")
+    },
+    async createReportBase(data) {
+      return await request("reports/report-bases", data)
+    },
+    async uploadReportTemplate(filename, buffer) {
       const xlsxType = ("application/vnd.openxmlformats-officedocument" +
                         ".spreadsheetml.sheet")
       let formData = encodeFormData(filename, xlsxType, buffer)
-      return request("reports/file/upload", formData.body, {
+      let text = await request("reports/file/upload", formData.body, {
         "Content-Type": formData.contentType,
       })
+      let pattern = /File with name "([^"]+)" uploaded successfully/
+      return {filename: text.match(pattern)[1]}
     },
   }
 }
