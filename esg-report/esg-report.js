@@ -9,38 +9,37 @@ async function main() {
   let password = process.env.ESG_REPORT_PASSWORD
   let filename = process.argv[2] ?? process.env.ESG_REPORT_TEMPLATE
 
-  let fileData = await fs.readFile(filename)
   let api = await login(username, password)
 
-  console.log(await api.getReportBases())
+  //let fileData = await fs.readFile(filename)
+  //console.log(await api.getReportBases())
+  //let uploaded = await api.uploadReportTemplate("test.xlsx", fileData)
+  //console.log(uploaded)
+  //let spec = reportBaseSpec(uploaded.filename)
 
-  let uploaded = await api.uploadReportTemplate("test.xlsx", fileData)
-  console.log(uploaded)
-
-  let spec = reportBaseSpec(uploaded.filename)
+  let spec = reportBaseSpec("Standard-Connectivity")
   console.log(await api.createReportBase(spec))
 
   console.log(await api.getReportBases())
 }
 
 function reportBaseSpec(filename) {
-  // Docs: https://staging.yggio.net/docs/report/
   return {
-    "name": "Henrik's test report",
-    "description": "Based on the example report from Sensative",
-    "fileName": filename,
-    "secondsBetweenPoints": 0,
-    "sources": [
+    "name": "Not actually connectivity report",  // namn
+    "description": "Trying some stuff!", // Beskrivning
+    "fileName": filename, // Detta är namnet på filen som är bifogad i detta slack meddelande
+    "secondsBetweenPoints": 0, // Hur många sekunder mellan varje tidsserie punkt från varje iotnod, (I detta fall 0 sekunder som betyder _alla_ tidsseriepunkter för varje vald nod)
+    "sources": [  // Sources, en lista av olika filtreringar för hur och vad du vill hämta från våra databaser
       {
-        "valueFunction": "mean",
-        "query": "rssi",
-        "fields": [
+        "valueFunction": "mean", // en funktion riktad till våran tidsserie databas, `mean` värde för varje tidsseriepunkt i databasen
+        "query": "electricityConsumption", // ett query på vilka noder du vill hämta från ditt konto (i detta fallet hämtar vi alla noder som har fältet `rssi`.) (Det är detta queryt som fyller upp `iotnodeRawData` arket)
+        "fields": [ // Fields, en lista på fältnamn som du vill hämta från tiddserien. Här bestäms alltså vilka tidsseriefält du vill hämta, medans `query` hämtar alla fält, men bara det senaste värdena
           {
-            "name": "rssi",
-            "prettyName": "Rssi",
-            "dataType": "float"
+            "name": "electricityConsumption", // namnet på fältet du vill hämta ( i detta fall rssi )
+            "prettyName": "electricity Consumption", // Prettyname är till för hur det ska se ut i vårat UI eller excel arken ( här kan stå vad som helst )
+            "dataType": "float" // dataType, vilken datatyp är det på fältet, just nu har vi bara stöd för "float"
           },
-          {
+          { // Samma gäller för snr, vill man lägga till fler går det bra också.
             "name": "snr",
             "prettyName": "SNR",
             "dataType": "float"
