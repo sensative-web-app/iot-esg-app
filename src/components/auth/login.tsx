@@ -21,7 +21,7 @@ export const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleClick = async () => {
+  const handleClick = async (e: any) => {
     setIsLoading(true);
     console.log("1");
     const response = await fetch("/api/auth/login", {
@@ -35,6 +35,8 @@ export const Login = () => {
     console.log("2");
     if (data.status === 200) {
       console.log("3");
+      router.refresh();
+      e.preventDefault();
       router.push("/");
       router.refresh();
     } else {
