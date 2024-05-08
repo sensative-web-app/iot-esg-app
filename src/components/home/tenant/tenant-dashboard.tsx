@@ -49,10 +49,15 @@ export const TenantDashboard = ({
       return updatedVisibility;
     });
   };
-  const temperatureNode = data.find((node: any) =>
-    node.name.includes("Comfort"),
+
+  const temperatureNodes = data.filter((node: any) =>
+    Object.keys(node).some((key) => key.toLowerCase().includes("temperature")),
   );
+
+  const temperatureNode = temperatureNodes[0];
+
   const co2Node = data.find((node: any) => node.name.includes("CO2"));
+  // console.log(co2Node);
 
   return (
     <div className="flex flex-col h-full w-full justify-center gap-8">
@@ -87,14 +92,14 @@ export const TenantDashboard = ({
             sensorUnit="°C"
           />
         )}
-        {visibleComponents[1] && !isLoading && (
+        {/* {visibleComponents[1] && !isLoading && (
           <HumidityGauge
             nodeID={temperatureNode._id}
             currentValue={temperatureNode.humidityRelative}
             setID={setID!}
             sensorType="humidityRelative"
           />
-        )}
+        )} */}
         {visibleComponents[2] && !isLoading && (
           <SensorCard
             nodeID={co2Node._id}
@@ -105,6 +110,8 @@ export const TenantDashboard = ({
             sensorUnit="ppm"
           />
         )}
+
+        {/*
       </div>
       <div className="w-full h-full justify-center items-center">
         {visibleComponents[3] && (
@@ -122,7 +129,7 @@ export const TenantDashboard = ({
               accessToken={token!}
             ></ChartWrapper>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

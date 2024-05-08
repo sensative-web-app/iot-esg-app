@@ -19,8 +19,25 @@ export const Login = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   const response = await fetch("/api/auth/login", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({ username, password }),
+  //   });
+  //   const data = await response.json();
+  //   if (data.status === 200) {
+  //     router.push("/");
+  //     router.refresh();
+  //   } else {
+  //     setErrorMessage(data.error);
+  //   }
+  // };
+
+  const handleClick = async () => {
     const response = await fetch("/api/auth/login", {
       method: "POST",
       headers: {
@@ -47,35 +64,35 @@ export const Login = () => {
           {errorMessage ? errorMessage : <>&nbsp;</>}
         </CardDescription>
       </CardHeader>
-      <form onSubmit={handleSubmit}>
-        <CardContent className="grid gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="username">Username</Label>
-            <Input
-              id="username"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-        </CardContent>
-        <CardFooter>
-          <Button className="w-full" type="submit">
-            Sign in
-          </Button>
-        </CardFooter>
-      </form>
+      {/* <form onSubmit={handleSubmit}> */}
+      <CardContent className="grid gap-4">
+        <div className="grid gap-2">
+          <Label htmlFor="username">Username</Label>
+          <Input
+            id="username"
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="password">Password</Label>
+          <Input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+      </CardContent>
+      <CardFooter>
+        <Button className="w-full" onClick={handleClick}>
+          Sign in
+        </Button>
+      </CardFooter>
+      {/* </form> */}
     </Card>
   );
 };

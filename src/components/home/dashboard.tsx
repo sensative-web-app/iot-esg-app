@@ -3,7 +3,9 @@ import { PropertyOwner } from "./property-owner/property-owner";
 import { TenantDashboard } from "./tenant/tenant-dashboard";
 
 export const Dashboard = async ({ session }: { session: SessionData }) => {
-  const { accessToken } = session;
+  const { accessToken, role } = session;
+
+  console.log(process.env.NEXT_PUBLIC_SET_ID);
 
   return (
     <div className="w-full">

@@ -26,7 +26,7 @@ export async function NavBar() {
 
         <Link className="flex cursor-pointer flex-row text-center" href="/">
           <h3 className="items-center pl-2 text-center text-2xl text-primary ">
-            app name
+            IoT ESG app
           </h3>
         </Link>
       </div>
