@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,27 +18,12 @@ export const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   const response = await fetch("/api/auth/login", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({ username, password }),
-  //   });
-  //   const data = await response.json();
-  //   if (data.status === 200) {
-  //     router.push("/");
-  //     router.refresh();
-  //   } else {
-  //     setErrorMessage(data.error);
-  //   }
-  // };
-
   const handleClick = async () => {
+    setIsLoading(true);
+    console.log("1");
     const response = await fetch("/api/auth/login", {
       method: "POST",
       headers: {
@@ -46,10 +32,13 @@ export const Login = () => {
       body: JSON.stringify({ username, password }),
     });
     const data = await response.json();
+    console.log("2");
     if (data.status === 200) {
+      console.log("3");
       router.push("/");
       router.refresh();
     } else {
+      setIsLoading(false);
       setErrorMessage(data.error);
     }
   };
@@ -64,7 +53,6 @@ export const Login = () => {
           {errorMessage ? errorMessage : <>&nbsp;</>}
         </CardDescription>
       </CardHeader>
-      {/* <form onSubmit={handleSubmit}> */}
       <CardContent className="grid gap-4">
         <div className="grid gap-2">
           <Label htmlFor="username">Username</Label>
@@ -88,11 +76,16 @@ export const Login = () => {
         </div>
       </CardContent>
       <CardFooter>
-        <Button className="w-full" onClick={handleClick}>
-          Sign in
+        <Button className="w-full" onClick={handleClick} disabled={isLoading}>
+          {isLoading ? (
+            <div className="flex items-center justify-center">
+              <span className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white"></span>
+            </div>
+          ) : (
+            "Sign in"
+          )}
         </Button>
       </CardFooter>
-      {/* </form> */}
     </Card>
   );
 };
