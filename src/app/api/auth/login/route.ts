@@ -33,11 +33,10 @@ export async function POST(request: Request) {
     );
 
     const { token } = data;
-    // const user = await getUser(token);
+
     const nodes = await getNodes(token);
-    // console.log(user);
+
     session.accessToken = token;
-    // session.userID = user._id;
 
     session.nodes = nodes.map((node: any) => ({
       name: node.name,
@@ -45,10 +44,8 @@ export async function POST(request: Request) {
     }));
     session.expire = new Date().getTime() + 1000 * 60 * 60 * 5;
 
-    const role = await getRole(token);
-
+    const role = await getRole(session.accessToken);
     session.role = role ? role : "tenant";
-    console.log(role);
 
     await session.save();
 

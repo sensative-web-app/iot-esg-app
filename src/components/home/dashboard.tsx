@@ -1,11 +1,12 @@
 import { SessionData } from "@/lib/session";
 import { PropertyOwner } from "./property-owner/property-owner";
 import { TenantDashboard } from "./tenant/tenant-dashboard";
+import { Logout } from "../auth/logout";
 
 export const Dashboard = async ({ session }: { session: SessionData }) => {
   const { accessToken, role } = session;
 
-  console.log(process.env.NEXT_PUBLIC_SET_ID);
+  console.log(console.log(session.role));
 
   return (
     <div className="w-full">
@@ -19,7 +20,10 @@ export const Dashboard = async ({ session }: { session: SessionData }) => {
       {session.role === "property-owner" && <PropertyOwner session={session} />}
 
       {(!session.role || session.role === "") && (
-        <div>No role assigned / you do not belong to any usergroup yet</div>
+        <>
+          <Logout />
+          <div>No role assigned / you do not belong to any usergroup yet</div>
+        </>
       )}
     </div>
   );

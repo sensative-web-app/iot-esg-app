@@ -22,6 +22,7 @@ export const Login = () => {
   const router = useRouter();
 
   const handleClick = async (e: any) => {
+    router.prefetch("/");
     setIsLoading(true);
     console.log("1");
     const response = await fetch("/api/auth/login", {
@@ -35,8 +36,9 @@ export const Login = () => {
     console.log("2");
     if (data.status === 200) {
       console.log("3");
-      router.refresh();
+
       e.preventDefault();
+      router.refresh();
       router.push("/");
       router.refresh();
     } else {

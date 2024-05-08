@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { getSession } from "@/actions";
+import { getRole, getSession } from "@/actions";
 
 export async function middleware(request: NextRequest) {
   if (
@@ -18,6 +18,11 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url).toString());
   }
 
+  if (session && !session.role) {
+    const role = await getRole(session.accessToken);
+    session.role = role ? role : "tenant";
+    console.log("wooo" + session.role);
+  }
   if (
     request.nextUrl.pathname === "/reports" &&
     session?.role !== "property-owner"
