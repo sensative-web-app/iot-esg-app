@@ -22,7 +22,6 @@ export const Login = () => {
   const router = useRouter();
 
   const handleClick = async (e: any) => {
-    router.prefetch("/");
     setIsLoading(true);
     console.log("1");
     const response = await fetch("/api/auth/login", {
@@ -38,8 +37,8 @@ export const Login = () => {
       console.log("3");
 
       e.preventDefault();
-      router.refresh();
       router.push("/");
+      router.refresh();
       router.refresh();
     } else {
       setIsLoading(false);
