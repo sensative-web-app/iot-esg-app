@@ -8,12 +8,11 @@ describe("login flow", () => {
       .contains("nav", "log out")
       .should("not.exist");
 
-    cy.get(".inline-flex").click();
     cy.wait(1000);
 
     cy.get('[id="username"]').type(Cypress.env("username"));
     cy.get('input[id="password"]').type(Cypress.env("password"));
-    cy.get('button[type="submit"]').click();
+    cy.get('button[data-testid="login-button"]').click();
 
     // Workaround for what is probably a bug in our app.
     // On a freshly loaded page, the first click on the login button
@@ -21,10 +20,10 @@ describe("login flow", () => {
     cy.wait(5000);
     cy.get("body").then($body => {
       let navs = $body.find("nav");
-      let buttons = $body.find('button[type="submit"]');
+      let buttons = $body.find('button[data-testid="login-button"]');
       if (navs.length === 0 && buttons.length > 0) {
         cy.log("Clicking the login button a second time.");
-        cy.get('button[type="submit"]').click();
+        cy.get('button[data-testid="login-button"]').click();
       }
     });
 
