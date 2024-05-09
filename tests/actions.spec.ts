@@ -22,19 +22,13 @@ describe("getNodeStats", () => {
     expect(result).toEqual(expected);
   })
 
-  it("throws SyntaxError when node not found", async () => {
-    // Perhaps this should be considered a bug in the implementation;
-    // since the function returns undefined for other errors, should
-    // it really throw an exception for this case?
-    await expect(() => getNodeStats(
-      token, "def456", "averageTemperature"))
-      .rejects.toThrow(SyntaxError)
+  it("returns undefined when node not found", async () => {
+    const result = await getNodeStats(token, "def456", "averageTemperature")
+    expect(result).toBeUndefined()
   })
 
-  it("throws SyntaxError for bad token", async () => {
-    // As for node not found, this probably shouldn't throw SyntaxError.
-    await expect(() => getNodeStats(
-      "bad-token", "abc123", "averageTemperature"))
-      .rejects.toThrow(SyntaxError)
+  it("returns undefined for bad token", async () => {
+    const result = await getNodeStats("bad-token", "abc123", "averageTemperature")
+    expect(result).toBeUndefined()
   })
 })
