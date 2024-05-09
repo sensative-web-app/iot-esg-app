@@ -42,7 +42,7 @@ export default function ChartWrapper({
     data = refetchedData.data;
   };
 
-  return (
+  return !data ? <></> : (
     <div className="flex-col w-full justify-center items-center">
       <div className="w-full flex items-center justify-center mb-4">
         <div className="w-[800px] flex justify-end">

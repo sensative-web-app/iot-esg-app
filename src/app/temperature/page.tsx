@@ -10,7 +10,7 @@ export default async function Index() {
   const { accessToken, nodes } = session;
 
   const tempNodeID = nodes.find((node: any) =>
-    node.name.includes("Comfort"),
+    node.name.includes("CO2"),
   )?.id;
 
   const node = await getNode(accessToken!, tempNodeID!);
@@ -20,21 +20,25 @@ export default async function Index() {
       <div className="text-primary flex min-h-[calc(100vh-64px)]  w-full flex-col items-center pt-6">
         <div className="w-full h-full justify-center">
           <div className="flex w-full justify-center gap-24">
-            <HumidityGauge
-              nodeID={node._id}
-              currentValue={node.relativeHumidity}
-              setID={process.env.NEXT_PUBLIC_SET_ID!}
-              sensorType="relativeHumidity"
-            />
-            <SensorCard
-              nodeID={node._id}
-              currentValue={node.temperature.toFixed(1)}
-              reportedAt={node.reportedAt}
-              setID={process.env.NEXT_PUBLIC_SET_ID!}
-              // userID={userID!}
-              sensorType="temperature"
-              sensorUnit="°C"
-            />
+            {!node ? <></> :(
+              <HumidityGauge
+                nodeID={node._id}
+                currentValue={node.relativeHumidity}
+                setID={process.env.NEXT_PUBLIC_SET_ID!}
+                sensorType="relativeHumidity"
+              />)
+            }
+            {!node ? <></> :
+              <SensorCard
+                nodeID={node._id}
+                currentValue={node.temperature.toFixed(1)}
+                reportedAt={node.reportedAt}
+                setID={process.env.NEXT_PUBLIC_SET_ID!}
+                // userID={userID!}
+                sensorType="temperature"
+                sensorUnit="°C"
+              />
+            }
             <Thermostat />
 
           </div>

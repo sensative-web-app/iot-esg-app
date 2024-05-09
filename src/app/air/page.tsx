@@ -32,8 +32,9 @@ export default async function Index() {
       <div className="text-primary flex min-h-[calc(100vh-64px)]  w-full flex-col items-center pt-6">
         <div className="w-full h-full justify-center">
           <div className="flex w-full justify-center gap-24 ">
-            <AirGauge token={accessToken} id={airNode._id} />
-
+            { !airNode ? <></> : (
+           <AirGauge token={accessToken} id={airNode._id} />
+            )}
             <SensorCard
               nodeID={co2Node._id}
               reportedAt={co2Node.reportedAt}

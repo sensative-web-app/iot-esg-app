@@ -83,7 +83,7 @@ export const TenantDashboard = ({
         </DropdownMenu>
       </div>
       <div className="flex w-full justify-center items-center pt-6 gap-16 ">
-        {visibleComponents[0] && !isLoading && (
+        {visibleComponents[0] && !isLoading && temperatureNode &&(
           <SensorCard
             nodeID={temperatureNode._id}
             currentValue={temperatureNode.temperature.toFixed(1)}
@@ -93,7 +93,7 @@ export const TenantDashboard = ({
             sensorUnit="°C"
           />
         )}
-         {visibleComponents[1] && !isLoading && (
+         {visibleComponents[1] && !isLoading && humidityNode && (
           <HumidityGauge
             nodeID={humidityNode._id}
             currentValue={humidityNode.relativeHumidity}
@@ -101,7 +101,7 @@ export const TenantDashboard = ({
             sensorType="relativeHumidity"
           />
         )}
-        {visibleComponents[2] && !isLoading && (
+        {visibleComponents[2] && !isLoading && co2Node && (
           <SensorCard
             nodeID={co2Node._id}
             currentValue={co2Node.co2}

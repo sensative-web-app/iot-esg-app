@@ -42,8 +42,7 @@ export const HumidityGauge = ({
 
     useMqtt(setID, nodeID, onMessage);
 
-
-    return (
+    return !nodeID ? <></> : (
         <ErrorBoundary fallback={<div></div>}>
             <Card className="w-90 rounded-2xl pt-4 flex items-center bg-muted justify-center">
                 <div className="flex items-center justify-center w-full">
