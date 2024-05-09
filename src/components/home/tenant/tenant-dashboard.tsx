@@ -92,14 +92,14 @@ export const TenantDashboard = ({
             sensorUnit="°C"
           />
         )}
-        {/* {visibleComponents[1] && !isLoading && (
+         {visibleComponents[1] && !isLoading && (
           <HumidityGauge
             nodeID={temperatureNode._id}
             currentValue={temperatureNode.relativeHumidity}
             setID={setID!}
             sensorType="relativeHumidity"
           />
-        )} */}
+        )}
         {visibleComponents[2] && !isLoading && (
           <SensorCard
             nodeID={co2Node._id}
@@ -111,7 +111,7 @@ export const TenantDashboard = ({
           />
         )}
 
-        {/*
+
       </div>
       <div className="w-full h-full justify-center items-center">
         {visibleComponents[3] && (
@@ -129,7 +129,7 @@ export const TenantDashboard = ({
               accessToken={token!}
             ></ChartWrapper>
           </div>
-        )} */}
+        )}
       </div>
     </div>
   );

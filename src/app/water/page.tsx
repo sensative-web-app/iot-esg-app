@@ -40,7 +40,7 @@ export default async function Index() {
               sensorType="cWater"
               sensorUnit="liter"
             />
-            {/* <SensorCard
+             <SensorCard
               nodeID={warmWaterNode._id}
               reportedAt={warmWaterNode.reportedAt}
               currentValue={warmWaterNode.currentVolume}
@@ -48,7 +48,7 @@ export default async function Index() {
               // userID={userID!}
               sensorType="wWater"
               sensorUnit="liter"
-            /> */}
+            />
           </div>
           <div className="pt-10 w-full justify-center ">
             <ChartWrapper chart="waterChart" accessToken={accessToken!} />
