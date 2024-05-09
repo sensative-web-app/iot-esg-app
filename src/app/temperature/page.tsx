@@ -28,7 +28,7 @@ export default async function Index() {
             />
             <SensorCard
               nodeID={node._id}
-              currentValue={node.temperature}
+              currentValue={node.temperature.toFixed(1)}
               reportedAt={node.reportedAt}
               setID={process.env.NEXT_PUBLIC_SET_ID!}
               // userID={userID!}

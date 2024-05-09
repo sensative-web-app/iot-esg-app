@@ -85,7 +85,7 @@ export const TenantDashboard = ({
         {visibleComponents[0] && !isLoading && (
           <SensorCard
             nodeID={temperatureNode._id}
-            currentValue={temperatureNode.temperature}
+            currentValue={temperatureNode.temperature.toFixed(1)}
             reportedAt={temperatureNode.reportedAt}
             setID={setID!}
             sensorType="temperature"

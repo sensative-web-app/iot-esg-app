@@ -49,8 +49,12 @@ export const SensorCard = ({
 
     const reportedAt = iotnode.reportedAt;
 
-    const sensorValue = iotnode[sensorType];
+    let sensorValue = iotnode[sensorType];
     console.log(`update ${sensorType}: ${sensorValue}`);
+
+    if (sensorType === "temperature") {
+      sensorValue = sensorValue.toFixed(1);
+    }
 
     setValue(sensorValue);
     setReportedTime(reportedAt);
