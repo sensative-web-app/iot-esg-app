@@ -303,10 +303,8 @@ export const getNodeStats = async (
     cache: "no-store",
   });
 
-  const stats = await response.json();
-
   if (response.ok) {
-    return stats;
+    return await response.json();
   } else {
     return undefined;
   }
