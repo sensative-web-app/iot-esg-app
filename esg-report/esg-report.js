@@ -1,10 +1,13 @@
 import crypto from "node:crypto"
 import fs from "node:fs/promises"
+import {createWriteStream} from "node:fs"
+import {Writable} from "node:stream"
 
 const apiUrl = process.env.ESG_REPORT_API_URL ||
       "https://staging.yggio.net/api"
 
 const reportName = "Not actually connectivity report"
+const reportOutputFilename = "report.xlsx"
 
 async function main() {
   let username = process.env.ESG_REPORT_USERNAME
@@ -28,7 +31,9 @@ async function main() {
   if (reportBaseIds.length === 0) {
     console.log("Creating new report base.")
     let spec = reportBaseSpec("Standard-Connectivity", reportName)
-    console.log(await api.createReportBase(spec))
+    let createdReportBase = await api.createReportBase(spec)
+    reportBaseIds.push(createdReportBase._id)
+    console.log(createdReportBase)
   }
 
   //let fileData = await fs.readFile(filename)
@@ -37,7 +42,13 @@ async function main() {
   //console.log(uploaded)
   //let spec = reportBaseSpec(uploaded.filename)
 
-  console.log(await api.getReportBases())
+  console.log("Generating report:", reportBaseIds[0])
+  let generatedReport = await api.generateReport(reportBaseIds[0])
+  let downloadUrl = generatedReport.downloadUrl
+  console.log("Download URL:", downloadUrl)
+
+  downloadFile(downloadUrl, reportOutputFilename)
+  console.log("Downloaded report:", reportOutputFilename)
 }
 
 function reportBaseSpec(filename, name) {
@@ -65,6 +76,12 @@ function reportBaseSpec(filename, name) {
       }
     ]
   }
+}
+
+async function downloadFile(url, filename) {
+  let outputStream = Writable.toWeb(createWriteStream(filename))
+  let response = await fetch(url)
+  await response.body.pipeTo(outputStream)
 }
 
 async function login(username, password) {
@@ -124,6 +141,20 @@ async function login(username, password) {
       })
       let pattern = /File with name "([^"]+)" uploaded successfully/
       return {filename: text.match(pattern)[1]}
+    },
+    async generateReport(reportBaseId) {
+      let periodDays = 365
+      let now = Date.now()
+      let requestBody = {
+        "startTime": now - periodDays * 24 * 3600 * 1000,
+        "endTime": now,
+        "includeRawData": true,
+        queryParametersInputs: {},
+      }
+      let url = "reports/report-bases/" +
+        encodeURIComponent(reportBaseId) +
+        "/generate"
+      return await request(url, requestBody)
     },
   }
 }
