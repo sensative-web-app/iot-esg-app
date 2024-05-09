@@ -95,9 +95,9 @@ export const TenantDashboard = ({
         {/* {visibleComponents[1] && !isLoading && (
           <HumidityGauge
             nodeID={temperatureNode._id}
-            currentValue={temperatureNode.humidityRelative}
+            currentValue={temperatureNode.relativeHumidity}
             setID={setID!}
-            sensorType="humidityRelative"
+            sensorType="relativeHumidity"
           />
         )} */}
         {visibleComponents[2] && !isLoading && (

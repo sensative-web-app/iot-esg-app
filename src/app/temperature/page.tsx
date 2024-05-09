@@ -3,6 +3,7 @@ import { SideNav } from "@/components/nav/side-nav";
 import ChartWrapper from "@/components/home/tenant/chart-wrapper";
 import { SensorCard } from "@/components/home/tenant/sensor-card";
 import { HumidityGauge } from "@/components/home/tenant/humidity-gauge";
+import { Thermostat } from "@/components/home/tenant/termostat";
 
 export default async function Index() {
   const session = await getSession();
@@ -21,9 +22,9 @@ export default async function Index() {
           <div className="flex w-full justify-center gap-24">
             <HumidityGauge
               nodeID={node._id}
-              currentValue={node.humidityRelative}
+              currentValue={node.relativeHumidity}
               setID={process.env.NEXT_PUBLIC_SET_ID!}
-              sensorType="humidityRelative"
+              sensorType="relativeHumidity"
             />
             <SensorCard
               nodeID={node._id}
@@ -34,6 +35,7 @@ export default async function Index() {
               sensorType="temperature"
               sensorUnit="°C"
             />
+            <Thermostat />
 
           </div>
           <div className="pt-10 w-full justify-center ">
