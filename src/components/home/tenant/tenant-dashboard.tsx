@@ -55,6 +55,7 @@ export const TenantDashboard = ({
   );
 
   const temperatureNode = temperatureNodes[0];
+  const humidityNode = data.find((node: any) => node.name.includes("Comfort"));
 
   const co2Node = data.find((node: any) => node.name.includes("CO2"));
   // console.log(co2Node);
@@ -94,8 +95,8 @@ export const TenantDashboard = ({
         )}
          {visibleComponents[1] && !isLoading && (
           <HumidityGauge
-            nodeID={temperatureNode._id}
-            currentValue={temperatureNode.relativeHumidity}
+            nodeID={humidityNode._id}
+            currentValue={humidityNode.relativeHumidity}
             setID={setID!}
             sensorType="relativeHumidity"
           />

@@ -1,7 +1,7 @@
 "use client";
 
 import { formatDistanceToNow } from "date-fns";
-import { useState, Suspense } from "react";
+import { useState, Suspense, useEffect } from "react";
 import { CardContent, Card } from "@/components/ui/card";
 import { ErrorBoundary } from "react-error-boundary";
 import { useMqtt } from "@/lib/mqtt";
@@ -25,6 +25,7 @@ export const SensorCard = ({
 }) => {
   const [value, setValue] = useState(currentValue);
   const [reportedTime, setReportedTime] = useState(reportedAt);
+  const [formattedReportedTime, setFormattedReportedTime] = useState("");
 
   let icon;
   switch (sensorType) {
@@ -62,10 +63,25 @@ export const SensorCard = ({
 
   useMqtt(setID, nodeID, onMessage);
 
-  console.log(reportedTime);
-  const formattedReportedTime = formatDistanceToNow(new Date(reportedTime), {
-    addSuffix: true,
-  });
+  const updateFormattedReportedTime = () => {
+    const formattedTime = formatDistanceToNow(new Date(reportedTime), {
+      addSuffix: true,
+    });
+    setFormattedReportedTime(formattedTime);
+  };
+
+
+  useEffect(() => {
+    updateFormattedReportedTime();
+  }, [reportedTime]);
+
+
+  useEffect(() => {
+    const intervalID = setInterval(updateFormattedReportedTime, 30000);
+    return () => clearInterval(intervalID);
+  }, []);
+
+
 
   return (
     <ErrorBoundary fallback={<div></div>}>
