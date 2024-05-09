@@ -79,7 +79,7 @@ export const Login = () => {
         </div>
       </CardContent>
       <CardFooter>
-        <Button className="w-full" onClick={handleClick} disabled={isLoading}>
+        <Button className="w-full" onClick={handleClick}>
           {isLoading ? (
             <div className="flex items-center justify-center">
               <span className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white"></span>
