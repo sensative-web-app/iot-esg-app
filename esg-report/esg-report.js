@@ -4,6 +4,8 @@ import fs from "node:fs/promises"
 const apiUrl = process.env.ESG_REPORT_API_URL ||
       "https://staging.yggio.net/api"
 
+const reportName = "Not actually connectivity report"
+
 async function main() {
   let username = process.env.ESG_REPORT_USERNAME
   let password = process.env.ESG_REPORT_PASSWORD
@@ -11,21 +13,36 @@ async function main() {
 
   let api = await login(username, password)
 
+  let reportBaseIds = (await api.getReportBases())
+    .filter(r => r.name === reportName)
+    .map(r => r._id)
+  console.log("Existing report bases:", reportBaseIds)
+
+  // Delete existing report bases.
+  let id
+  while (id = reportBaseIds.pop()) {
+    console.log(`Deleting report base: ${id}`)
+    console.log(await api.deleteReportBase(id))
+  }
+
+  if (reportBaseIds.length === 0) {
+    console.log("Creating new report base.")
+    let spec = reportBaseSpec("Standard-Connectivity", reportName)
+    console.log(await api.createReportBase(spec))
+  }
+
   //let fileData = await fs.readFile(filename)
   //console.log(await api.getReportBases())
   //let uploaded = await api.uploadReportTemplate("test.xlsx", fileData)
   //console.log(uploaded)
   //let spec = reportBaseSpec(uploaded.filename)
 
-  let spec = reportBaseSpec("Standard-Connectivity")
-  console.log(await api.createReportBase(spec))
-
   console.log(await api.getReportBases())
 }
 
-function reportBaseSpec(filename) {
+function reportBaseSpec(filename, name) {
   return {
-    "name": "Not actually connectivity report",  // namn
+    "name": name,
     "description": "Trying some stuff!", // Beskrivning
     "fileName": filename, // Detta är namnet på filen som är bifogad i detta slack meddelande
     "secondsBetweenPoints": 0, // Hur många sekunder mellan varje tidsserie punkt från varje iotnod, (I detta fall 0 sekunder som betyder _alla_ tidsseriepunkter för varje vald nod)
@@ -53,9 +70,11 @@ function reportBaseSpec(filename) {
 async function login(username, password) {
   let token = null
 
-  async function request(path, data, headers={}) {
+  async function request(path, data, headers={}, action=null) {
     let response = await fetch(`${apiUrl}/${path}`, {
-      method: data === undefined ? "GET" : "POST",
+      method: action ? action
+        : data !== undefined ? "POST"
+        : "GET",
       headers: {
         "Content-Type": "application/json",
         "Accept": "application/json, */*;q=0.9",
@@ -67,11 +86,13 @@ async function login(username, password) {
         : JSON.stringify(data),
     })
 
+    let responseContentType = response.headers.get("Content-Type") ?? ""
+
     if (response.status >= 400) {
       let body = await response.text()
       throw new Error(`Response status ${response.status}: ${body}`)
     }
-    else if (response.headers.get("Content-Type").includes("json")) {
+    else if (responseContentType.includes("json")) {
       return await response.json()
     }
     else {
@@ -88,7 +109,13 @@ async function login(username, password) {
     async createReportBase(data) {
       return await request("reports/report-bases", data)
     },
+    async deleteReportBase(id) {
+      let url = "reports/report-bases/" + encodeURIComponent(id)
+      return await request(url, undefined, {}, "DELETE")
+    },
     async uploadReportTemplate(filename, buffer) {
+      // Uploading is currently broken due to a confirmed Yggio bug
+      // which corrupts the file.
       const xlsxType = ("application/vnd.openxmlformats-officedocument" +
                         ".spreadsheetml.sheet")
       let formData = encodeFormData(filename, xlsxType, buffer)
