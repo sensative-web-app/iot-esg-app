@@ -324,11 +324,11 @@ export const get2 = async () => { };
 export const getContTemp = async (
   token: string,
   nodeID: string,
-  contextMap: object,
+  contextMap: {termotemp?: number},
   newTemp: number,
 ) => {
 
-  if (contextMap.hasOwnProperty('termotemp')) {
+  if (Object.hasOwn(contextMap, 'termotemp')) {
     contextMap['termotemp'] = newTemp;
   }
 

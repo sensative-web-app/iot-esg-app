@@ -11,16 +11,16 @@ export const Thermostat = ({
     }: {
     session: string
     nodeID: string;
-    currentValue: object;
+    currentValue: {termotemp: number};
 
 }) => {
 
-    const temperatureUrls = {
-        19: '/rules/rules/activate/66192781f8ae26a22e0ebdd8',
-        20: '/rules/rules/activate/66192789f8ae26a22e0ebdda',
-        21: '/rules/rules/activate/6619278cf8ae26a22e0ebddd',
-        22: '/rules/rules/activate/66192790f8ae26a22e0ebddf',
-    };
+    const temperatureUrls = new Map([
+        [19, '/rules/rules/activate/66192781f8ae26a22e0ebdd8'],
+        [20, '/rules/rules/activate/66192789f8ae26a22e0ebdda'],
+        [21, '/rules/rules/activate/6619278cf8ae26a22e0ebddd'],
+        [22, '/rules/rules/activate/66192790f8ae26a22e0ebddf'],
+    ]);
 
     const [temperatureValue, setTemperatureValue] = useState(currentValue.termotemp);
    // setContTemp(session, nodeID, currentValue, 19)
@@ -28,7 +28,7 @@ export const Thermostat = ({
     const increaseTemperature = async () => {
         const newTemperature = temperatureValue + 1;
         setTemperatureValue(newTemperature);
-        const url = temperatureUrls[newTemperature];
+        const url = temperatureUrls.get(newTemperature);
         if (url) {
             const response = await changeTempOnTerm(session, url);
             setContTemp(session, nodeID, currentValue, newTemperature)
@@ -37,7 +37,7 @@ export const Thermostat = ({
     const decreaseTemperature = async () => {
         const newTemperature = temperatureValue - 1;
         setTemperatureValue(newTemperature);
-        const url = temperatureUrls[newTemperature];
+        const url = temperatureUrls.get(newTemperature);
         if (url) {
             const response = await changeTempOnTerm(session, url);
             console.log(response);
