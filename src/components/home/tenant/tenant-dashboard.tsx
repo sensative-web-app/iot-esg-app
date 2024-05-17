@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-
+import { getSession } from "@/actions";
 import ChartWrapper from "./chart-wrapper";
 import {
   DropdownMenu,
@@ -14,6 +14,8 @@ import { SensorCard } from "./sensor-card";
 import { HumidityGauge } from "./humidity-gauge";
 import { useQuery } from "@tanstack/react-query";
 import { fetchNodes } from "@/lib/queryHelper";
+import { getNodeByContext } from "@/actions";
+import { WaterChartData } from "./water-chart";
 
 const componentConfig = [
   { name: "Temperature", component: SensorCard, visible: true },
@@ -25,11 +27,9 @@ const componentConfig = [
 
 export const TenantDashboard = ({
   token,
-
   setID,
 }: {
   token: string;
-
   setID: string;
 }) => {
   const [visibleComponents, setVisibleComponents] = useState(
@@ -38,7 +38,14 @@ export const TenantDashboard = ({
 
   const { data, isLoading } = useQuery({
     queryKey: ["nodes"],
-    queryFn: () => fetchNodes(token),
+    queryFn: () => Promise.all([
+      getNodeByContext(token, "temperature"),
+      getNodeByContext(token, "co2"),
+      getNodeByContext(token, "humidity"),
+      getNodeByContext(token, "warmwater"),
+      getNodeByContext(token, "coldwater"),
+      getNodeByContext(token, "electricity")
+    ])
   });
 
   // Function to toggle component visibility
@@ -50,15 +57,7 @@ export const TenantDashboard = ({
     });
   };
 
-  const temperatureNodes = data.filter((node: any) =>
-    Object.keys(node).some((key) => key.toLowerCase().includes("temperature")),
-  );
-
-  const temperatureNode = temperatureNodes[0];
-  const humidityNode = data.find((node: any) => node.name.includes("Comfort"));
-
-  const co2Node = data.find((node: any) => node.name.includes("CO2"));
-  // console.log(co2Node);
+  const [temperatureNode, co2Node, humidityNode, warmWaterNode, coldWaterNode, electricityNode] = data ?? [null, null, null, null, null, null];
 
   return (
     <div className="flex flex-col h-full w-full justify-center gap-8">
@@ -118,8 +117,9 @@ export const TenantDashboard = ({
         {visibleComponents[3] && (
           <div className="w-full h-full justify-center items-center">
             <ChartWrapper
-              chart="electricityChart"
+              chart="electricityConsumptionChart"
               accessToken={token!}
+              chartData={electricityNode._id}
             ></ChartWrapper>
           </div>
         )}
@@ -128,7 +128,8 @@ export const TenantDashboard = ({
             <ChartWrapper
               chart="waterChart"
               accessToken={token!}
-            ></ChartWrapper>
+              chartData={{wWater: warmWaterNode._id, cWater: coldWaterNode._id} as WaterChartData}>
+            </ChartWrapper>
           </div>
         )}
       </div>

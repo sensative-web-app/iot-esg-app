@@ -383,7 +383,7 @@ export const changeTempOnTerm = async (
 export const getNodeByContext = async (
   token: string,
   context: string,
-) => {
+): Promise<any | null> => {
 
   let pattern = JSON.stringify({[`contextMap.LNU_type_${context}`]: context });
   let url = `${process.env.NEXT_PUBLIC_YGGIO_API_URL}/iotnodes?matchPattern=` + pattern;

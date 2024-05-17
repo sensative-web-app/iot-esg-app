@@ -4,6 +4,7 @@ export const fetchChartData = async (
   accessToken: string,
   range: string,
   chart: string,
+  chartData: any
 ) => {
   const currentTimestamp = Date.now();
   let startTime;
@@ -55,13 +56,14 @@ export const fetchChartData = async (
     case "electricityChart":
       return fetchElectricityData(
         accessToken,
+        chartData,
         startTime,
         currentTimestamp,
         distance,
         xAxisOptions,
       );
     case "temperatureChart":
-      return fetchTemperatureData(accessToken, startTime, xAxisOptions);
+      return fetchTemperatureData(accessToken, chartData, startTime, xAxisOptions);
 
     case "co2Chart":
       return fetchCo2Data(
@@ -75,6 +77,7 @@ export const fetchChartData = async (
     case "electricityConsumptionChart":
       return fetchElectricityConsumption(
         accessToken,
+        chartData,
         startTime,
         currentTimestamp,
         distance,
@@ -133,13 +136,14 @@ export const fetchCo2Data = async (
 
 export const fetchTemperatureData = async (
   accessToken: string,
+  nodeID: string,
   startTime: number,
   xAxisOptions: any,
 ) => {
   // console.log(startTime);
   const temperatureData = await getNodeStats(
     accessToken,
-    "60a3ab8b007e8f00076009eb",
+    nodeID,
     "temperature",
     startTime,
   );
@@ -175,6 +179,7 @@ export const fetchTemperatureData = async (
 
 export const fetchElectricityData = async (
   accessToken: string,
+  nodeID: string,
   startTime: number,
   currentTimestamp: number,
   distance: number,
@@ -182,6 +187,7 @@ export const fetchElectricityData = async (
 ) => {
   const incrementalConsumptionData = await fetchConsumptioneData({
     accessToken,
+    nodeID,
     startTime,
     currentTimestamp,
     distance,
@@ -260,18 +266,20 @@ const formatData = (rawData: any) => {
 
 const fetchConsumptioneData = async ({
   accessToken,
+  nodeID,
   startTime,
   currentTimestamp,
   distance,
 }: {
   accessToken: string;
+  nodeID: string,
   startTime: number;
   currentTimestamp: number;
   distance: number;
 }) => {
   const rawElectricityConsumptionData = await getNodeStats(
     accessToken,
-    "65e830e40d1c07d883f0af86",
+    nodeID,
     "electricityConsumption",
     startTime,
     currentTimestamp,
@@ -297,6 +305,7 @@ const fetchConsumptioneData = async ({
 
 export const fetchElectricityConsumption = async (
   accessToken: string,
+  nodeID: string,
   startTime: number,
   currentTimestamp: number,
   distance: number,
@@ -304,6 +313,7 @@ export const fetchElectricityConsumption = async (
 ) => {
   const consumptionData = await fetchConsumptioneData({
     accessToken,
+    nodeID,
     startTime,
     currentTimestamp,
     distance,
@@ -336,7 +346,6 @@ export const fetchAirQualityData = async (token: string, id: string) => {
 
 export async function fetchNodes(token: string) {
   const nodes = await getNodes(token);
-
   return nodes;
 }
 

@@ -15,6 +15,8 @@ export default async function Index() {
 
   const termoNode = await getNodeByContext(accessToken, "thermostat")
 
+
+
   return (
     <SideNav role={session.role}>
       <div className="text-primary flex min-h-[calc(100vh-64px)]  w-full flex-col items-center pt-6">
@@ -47,7 +49,7 @@ export default async function Index() {
 
           </div>
           <div className="pt-10 w-full justify-center ">
-            <ChartWrapper chart="temperatureChart" accessToken={accessToken!} />
+            <ChartWrapper chart="temperatureChart" accessToken={accessToken!} chartData={tempNode._id} />
           </div>
         </div>
       </div>

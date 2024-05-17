@@ -10,22 +10,6 @@ export default async function Index() {
   const session = await getSession();
   const { accessToken } = session;
 
-  // const queryClient = new QueryClient();
-
-  // await queryClient.prefetchQuery({
-  //   queryKey: ["nodes"],
-  //   queryFn: () => fetchNodes(session.accessToken),
-  // });
-  // let coldWaterNode;
-  // let warmWaterNode;
-
-  // const allNodes = await getNodes(session.accessToken);
-
-  // if (allNodes.length > 0) {
-  //   coldWaterNode = allNodes.find((node: any) => node.name.includes("KV"));
-  //   warmWaterNode = allNodes.find((node: any) => node.name.includes("V.V"));
-  // }
-
   const warmWaterNode = await getNodeByContext(accessToken, "warmwater")
 
   const coldWaterNode = await getNodeByContext(accessToken, "coldwater")
@@ -45,7 +29,7 @@ export default async function Index() {
               sensorType="cWater"
               sensorUnit="liter"
             />
-          )},
+          )}
             {!warmWaterNode ? <></> : (
              <SensorCard
               nodeID={warmWaterNode._id}
@@ -59,7 +43,7 @@ export default async function Index() {
             )}
           </div>
           <div className="pt-10 w-full justify-center ">
-            <ChartWrapper chart="waterChart" accessToken={accessToken!} />
+            <ChartWrapper chart="waterChart" accessToken={accessToken!} chartData={{wWater: warmWaterNode._id, cWater: coldWaterNode._id}} />
           </div>
         </div>
       </div>

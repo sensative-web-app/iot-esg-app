@@ -1,6 +1,6 @@
 import ChartWrapper from "@/components/home/tenant/chart-wrapper";
 import { getNodes, getSession } from "@/actions";
-
+import { getNodeByContext } from "@/actions";
 import { SideNav } from "@/components/nav/side-nav";
 import { SensorCard } from "@/components/home/tenant/sensor-card";
 import { AirGauge } from "@/components/home/tenant/air-gauge";
@@ -18,14 +18,15 @@ export default async function Index() {
     queryFn: () => fetchNodes(session.accessToken),
   });
   let airNode;
-  let co2Node;
+
 
   const allNodes = await getNodes(session.accessToken);
-
   if (allNodes.length > 0) {
     airNode = allNodes.find((node: any) => node.name.includes("Air"));
-    co2Node = allNodes.find((node: any) => node.name.includes("CO2"));
+
   }
+
+  const co2Node = await getNodeByContext(accessToken, "co2")
 
   return (
     <SideNav role={session.role}>
@@ -35,6 +36,7 @@ export default async function Index() {
             { !airNode ? <></> : (
            <AirGauge token={accessToken} id={airNode._id} />
             )}
+            { !co2Node ? <></> : (
             <SensorCard
               nodeID={co2Node._id}
               reportedAt={co2Node.reportedAt}
@@ -44,9 +46,10 @@ export default async function Index() {
               sensorType="co2"
               sensorUnit="ppm"
             />
+          )}
           </div>
           <div className="pt-10 w-full justify-center ">
-            <ChartWrapper chart="co2Chart" accessToken={accessToken!} />
+            <ChartWrapper chart="co2Chart" accessToken={accessToken!} chartData={co2Node._id}/>
           </div>
         </div>
       </div>
