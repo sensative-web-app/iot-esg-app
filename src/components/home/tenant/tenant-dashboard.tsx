@@ -25,7 +25,7 @@ const componentConfig = [
   { name: "Water chart", component: ChartWrapper, visible: true },
 ];
 
-export const TenantDashboard = ({
+export const TenantDashboard = async ({
   token,
   setID,
 }: {
@@ -35,29 +35,60 @@ export const TenantDashboard = ({
   const [visibleComponents, setVisibleComponents] = useState(
     componentConfig.map((config) => config.visible),
   );
+  // const { data, isLoading } = useQuery({
+  //   queryKey: ["nodes"],
+  //   queryFn: () => {
+  //     let temp = getNodeByContext(token, "temperature");
+  //     let ummm = temp.then(mytemp => {
+  //       console.log("Got the temp yo", mytemp);
+  //       return mytemp;
+  //     })
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["nodes"],
-    queryFn: () => Promise.all([
-      getNodeByContext(token, "temperature"),
-      getNodeByContext(token, "co2"),
-      getNodeByContext(token, "humidity"),
-      getNodeByContext(token, "warmwater"),
-      getNodeByContext(token, "coldwater"),
-      getNodeByContext(token, "electricity")
-    ])
-  });
+  //     let mock = Promise.resolve({
+  //       _id: "12345",
+  //       temperature: 1000,
+  //       reportedAt: "2024-04-01",
+  //     })
+
+  //     let promise = Promise.all([
+  //       mock,
+  //       getNodeByContext(token, "co2"),
+  //       getNodeByContext(token, "humidity"),
+  //       getNodeByContext(token, "warmwater"),
+  //       getNodeByContext(token, "coldwater"),
+  //       getNodeByContext(token, "electricity")
+  //     ])
+  //     promise.then((grejs: any) => {
+  //       console.log("Åh fan, nu är det grejer på gång:", grejs);
+  //     })
+  //     promise.catch(ex => console.log("Oh no!", ex));
+  //     return promise;
+  //   }
+  // });
 
   // Function to toggle component visibility
   const toggleComponentVisibility = (index: number) => {
     setVisibleComponents((prevState) => {
       const updatedVisibility = [...prevState];
       updatedVisibility[index] = !updatedVisibility[index];
-      return updatedVisibility;
+      return updatedVisibility
     });
   };
 
-  const [temperatureNode, co2Node, humidityNode, warmWaterNode, coldWaterNode, electricityNode] = data ?? [null, null, null, null, null, null];
+ // const [temperatureNode, co2Node, humidityNode, warmWaterNode, coldWaterNode, electricityNode] = data ?? [null, null, null, null, null, null];
+ console.log("one!")
+const temperatureNode = await getNodeByContext(token, "electricity")
+console.log("zwei!")
+const co2Node = await getNodeByContext(token, "co2");
+console.log("three!")
+const humidityNode = await getNodeByContext(token, "humidity");
+console.log("si!")
+const warmWaterNode = await getNodeByContext(token, "warmwater");
+console.log("go!")
+const coldWaterNode = await getNodeByContext(token, "coldwater");
+console.log("six!")
+const electricityNode = await getNodeByContext(token, "electricity");
+console.log("sieben!")
 
   return (
     <div className="flex flex-col h-full w-full justify-center gap-8">
@@ -82,17 +113,17 @@ export const TenantDashboard = ({
         </DropdownMenu>
       </div>
       <div className="flex w-full justify-center items-center pt-6 gap-16 ">
-        {visibleComponents[0] && !isLoading && temperatureNode &&(
+        {visibleComponents[0] && temperatureNode &&(
           <SensorCard
             nodeID={temperatureNode._id}
-            currentValue={temperatureNode.temperature.toFixed(1)}
+            currentValue={temperatureNode.temperature}
             reportedAt={temperatureNode.reportedAt}
             setID={setID!}
             sensorType="temperature"
             sensorUnit="°C"
           />
         )}
-         {visibleComponents[1] && !isLoading && humidityNode && (
+         {visibleComponents[1] && humidityNode && (
           <HumidityGauge
             nodeID={humidityNode._id}
             currentValue={humidityNode.humidity}
@@ -100,7 +131,7 @@ export const TenantDashboard = ({
             sensorType="humidity"
           />
         )}
-        {visibleComponents[2] && !isLoading && co2Node && (
+        {visibleComponents[2]  && co2Node && (
           <SensorCard
             nodeID={co2Node._id}
             currentValue={co2Node.co2}
