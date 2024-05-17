@@ -21,7 +21,7 @@ export async function middleware(request: NextRequest) {
   if (session && !session.role) {
     const role = await getRole(session.accessToken);
     session.role = role ? role : "tenant";
-    console.log("wooo" + session.role);
+    console.log("User role: " + session.role);
   }
   if (
     request.nextUrl.pathname === "/reports" &&
