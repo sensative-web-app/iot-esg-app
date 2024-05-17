@@ -433,6 +433,3 @@ export const fetchWaterData = async (
 export const setContTemp = async (token: string, id: string, contextMap: object, newTemp: number) => {
  await getContTemp(token, id, contextMap, newTemp);
 };
-
-
-

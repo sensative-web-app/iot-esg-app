@@ -324,7 +324,7 @@ export const get2 = async () => { };
 export const getContTemp = async (
   token: string,
   nodeID: string,
-  contextMap: {termotemp?: number},
+  contextMap: any,
   newTemp: number,
 ) => {
 
@@ -384,7 +384,9 @@ export const getNodeByContext = async (
   token: string,
   context: string,
 ) => {
-  let url = `${process.env.NEXT_PUBLIC_YGGIO_API_URL}/iotnodes?matchPattern=` + JSON.stringify({ [`contextMap.${context}`]: context });
+
+  let pattern = JSON.stringify({[`contextMap.LNU_type_${context}`]: context });
+  let url = `${process.env.NEXT_PUBLIC_YGGIO_API_URL}/iotnodes?matchPattern=` + pattern;
 
   const response = await fetch(url, {
     method: "GET",
@@ -395,7 +397,8 @@ export const getNodeByContext = async (
   });
 
   if (response.ok) {
-    return await response.json();
+    const nodes = await response.json();
+    return nodes.length ? nodes[0] : undefined;
   } else {
     return undefined;
   }
