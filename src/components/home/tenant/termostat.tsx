@@ -11,7 +11,7 @@ export const Thermostat = ({
     }: {
     session: string
     nodeID: string;
-    currentValue: {termotemp: number};
+    currentValue: {termotemp: number | null};
 
 }) => {
 
@@ -22,7 +22,8 @@ export const Thermostat = ({
         [22, '/rules/rules/activate/66192790f8ae26a22e0ebddf'],
     ]);
 
-    const [temperatureValue, setTemperatureValue] = useState(currentValue.termotemp);
+    const initialTermotemp = currentValue.termotemp ?? 0
+    const [temperatureValue, setTemperatureValue] = useState(initialTermotemp);
    // setContTemp(session, nodeID, currentValue, 19)
 
     const increaseTemperature = async () => {

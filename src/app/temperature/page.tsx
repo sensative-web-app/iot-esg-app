@@ -1,4 +1,4 @@
-import { getNode, getSession } from "@/actions";
+import { getNode, getSession, getNodeByContext } from "@/actions";
 import { SideNav } from "@/components/nav/side-nav";
 import ChartWrapper from "@/components/home/tenant/chart-wrapper";
 import { SensorCard } from "@/components/home/tenant/sensor-card";
@@ -17,8 +17,11 @@ export default async function Index() {
     node.name.includes("Termostat"),
   )?.id;
 
+  const termoNode = await getNodeByContext(accessToken, "termostat")
+  console.log(termoNode)
+
   const node = await getNode(accessToken!, tempNodeID!);
-  const termoNode = await getNode(accessToken!, termoNodeID!);
+ // const termoNode = await getNode(accessToken!, termoNodeID!);
   return (
     <SideNav role={session.role}>
       <div className="text-primary flex min-h-[calc(100vh-64px)]  w-full flex-col items-center pt-6">
@@ -45,8 +48,8 @@ export default async function Index() {
             }
             <Thermostat
               session={accessToken}
-              nodeID={termoNode._id}
-              currentValue={termoNode.contextMap}
+              nodeID={termoNode[0]._id}
+              currentValue={termoNode[0].contextMap}
             />
 
           </div>
