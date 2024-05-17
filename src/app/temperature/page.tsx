@@ -14,7 +14,7 @@ export default async function Index() {
   )?.id;
 
   const termoNodeID = nodes.find((node: any) =>
-    node.name.includes("ATermostat"),
+    node.name.includes("Termostat"),
   )?.id;
 
   const node = await getNode(accessToken!, tempNodeID!);

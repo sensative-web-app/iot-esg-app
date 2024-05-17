@@ -5,7 +5,7 @@ import { IronSession, getIronSession } from "iron-session";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-export const get = async () => {};
+export const get = async () => { };
 
 export const getSession = async () => {
   let session = await getIronSession<SessionData>(cookies(), sessionOptions);
@@ -165,7 +165,7 @@ export const createBasicCredentialsSet = async (id: string, token: string) => {
         }),
       },
     );
-   // console.log(response);
+    // console.log(response);
 
     if (response.status === 404) {
       return undefined;
@@ -319,7 +319,7 @@ export const getList = () => {
   return list;
 };
 
-export const get2 = async () => {};
+export const get2 = async () => { };
 
 export const getContTemp = async (
   token: string,
@@ -345,7 +345,7 @@ export const getContTemp = async (
     body: JSON.stringify({
       contextMap: contextMap
     }),
-  
+
   });
 
   if (response.ok) {
@@ -373,6 +373,29 @@ export const changeTempOnTerm = async (
 
   if (response.ok) {
     return response.ok;
+  } else {
+    return undefined;
+  }
+};
+
+
+
+export const getNodeByContext = async (
+  token: string,
+  context: string,
+) => {
+  let url = `${process.env.NEXT_PUBLIC_YGGIO_API_URL}/iotnodes?matchPattern=` + JSON.stringify({ [`contextMap.${context}`]: context });
+
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (response.ok) {
+    return await response.json();
   } else {
     return undefined;
   }
