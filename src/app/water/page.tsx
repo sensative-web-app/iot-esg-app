@@ -43,7 +43,7 @@ export default async function Index() {
             )}
           </div>
           <div className="pt-10 w-full justify-center ">
-            <ChartWrapper chart="waterChart" accessToken={accessToken!} chartData={{wWater: warmWaterNode._id, cWater: coldWaterNode._id}} />
+            <ChartWrapper chart="waterChart" accessToken={accessToken!} chartData={{wWater: warmWaterNode?._id, cWater: coldWaterNode?._id}} />
           </div>
         </div>
       </div>

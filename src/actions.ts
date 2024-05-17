@@ -279,7 +279,7 @@ export const getNodeStats = async (
   start?: number,
   end?: number,
   distance?: number,
-) => {
+): Promise<NonNullable<any> | undefined> => {
   let url = `${process.env.NEXT_PUBLIC_YGGIO_API_URL}/iotnodes/${nodeID}/stats?measurement=${measurement}`;
 
   if (start !== undefined) {

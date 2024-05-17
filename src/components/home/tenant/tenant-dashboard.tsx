@@ -95,9 +95,9 @@ export const TenantDashboard = ({
          {visibleComponents[1] && !isLoading && humidityNode && (
           <HumidityGauge
             nodeID={humidityNode._id}
-            currentValue={humidityNode.relativeHumidity}
+            currentValue={humidityNode.humidity}
             setID={setID!}
-            sensorType="relativeHumidity"
+            sensorType="humidity"
           />
         )}
         {visibleComponents[2] && !isLoading && co2Node && (
@@ -114,7 +114,7 @@ export const TenantDashboard = ({
 
       </div>
       <div className="w-full h-full justify-center items-center">
-        {visibleComponents[3] && (
+        {visibleComponents[3] && electricityNode && (
           <div className="w-full h-full justify-center items-center">
             <ChartWrapper
               chart="electricityConsumptionChart"
@@ -123,12 +123,12 @@ export const TenantDashboard = ({
             ></ChartWrapper>
           </div>
         )}
-        {visibleComponents[4] && (
+        {visibleComponents[4] && (warmWaterNode || coldWaterNode) && (
           <div className="w-full h-full justify-center items-center my-10">
             <ChartWrapper
               chart="waterChart"
               accessToken={token!}
-              chartData={{wWater: warmWaterNode._id, cWater: coldWaterNode._id} as WaterChartData}>
+              chartData={{wWater: warmWaterNode?._id, cWater: coldWaterNode?._id} as WaterChartData}>
             </ChartWrapper>
           </div>
         )}
