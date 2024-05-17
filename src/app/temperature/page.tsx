@@ -13,14 +13,18 @@ export default async function Index() {
     node.name.includes("CO2"),
   )?.id;
 
+  const termoNodeID = nodes.find((node: any) =>
+    node.name.includes("ATermostat"),
+  )?.id;
+
   const node = await getNode(accessToken!, tempNodeID!);
-  // console.log(node);
+  const termoNode = await getNode(accessToken!, termoNodeID!);
   return (
     <SideNav role={session.role}>
       <div className="text-primary flex min-h-[calc(100vh-64px)]  w-full flex-col items-center pt-6">
         <div className="w-full h-full justify-center">
           <div className="flex w-full justify-center gap-24">
-            {!node ? <></> :(
+            {!node ? <></> : (
               <HumidityGauge
                 nodeID={node._id}
                 currentValue={node.relativeHumidity}
@@ -39,7 +43,11 @@ export default async function Index() {
                 sensorUnit="°C"
               />
             }
-            <Thermostat />
+            <Thermostat
+              session={accessToken}
+              nodeID={termoNode._id}
+              currentValue={termoNode.contextMap}
+            />
 
           </div>
           <div className="pt-10 w-full justify-center ">

@@ -1,4 +1,4 @@
-import { getNode, getNodeStats, getNodes } from "@/actions";
+import { getNode, getNodeStats, getNodes, getContTemp } from "@/actions";
 
 export const fetchChartData = async (
   accessToken: string,
@@ -427,6 +427,11 @@ export const fetchWaterData = async (
   };
 
   return { data, xAxisOptions };
+};
+
+
+export const setContTemp = async (token: string, id: string, contextMap: object, newTemp: number) => {
+ await getContTemp(token, id, contextMap, newTemp);
 };
 
 

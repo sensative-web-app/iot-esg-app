@@ -320,3 +320,60 @@ export const getList = () => {
 };
 
 export const get2 = async () => {};
+
+export const getContTemp = async (
+  token: string,
+  nodeID: string,
+  contextMap: object,
+  newTemp: number,
+) => {
+
+  if (contextMap.hasOwnProperty('termotemp')) {
+    contextMap['termotemp'] = newTemp;
+  }
+
+  console.log(contextMap)
+
+  let url = `${process.env.NEXT_PUBLIC_YGGIO_API_URL}/iotnodes/${nodeID}`;
+
+  const response = await fetch(url, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      contextMap: contextMap
+    }),
+  
+  });
+
+  if (response.ok) {
+    return await response.json();
+  } else {
+    return undefined;
+  }
+};
+
+export const changeTempOnTerm = async (
+  token: string,
+  url: string,
+) => {
+
+  const fullUrl = process.env.NEXT_PUBLIC_YGGIO_API_URL + url
+  console.log(fullUrl)
+
+  const response = await fetch(fullUrl, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "text/plain",
+    },
+  });
+
+  if (response.ok) {
+    return response.ok;
+  } else {
+    return undefined;
+  }
+};
