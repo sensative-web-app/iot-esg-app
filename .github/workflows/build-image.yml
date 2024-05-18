@@ -4,7 +4,7 @@ name: Build, publish and test container image
 
 on:
   push:
-    branches: ['main', 'staging', 'ci']
+    branches: ['main', 'staging', 'ci', 'protected', 'trunk/*']
 
 env:
   REGISTRY: ghcr.io
