@@ -1,0 +1,67 @@
+name: Update default branch after required checks
+
+on:
+  workflow_run:
+    workflows:
+      - Build, publish and test container image
+    types:
+      - completed
+    branches:
+      - 'gate/*'
+
+jobs:
+  integrate-branch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check success
+        id: check-success
+        shell: python
+        run: |
+          import os, json
+          from subprocess import run
+
+          with open(os.environ["GITHUB_EVENT_PATH"]) as f:
+              event = json.load(f)
+
+          default_branch = event["repository"]["default_branch"]
+          head_branch = event["workflow_run"]["head_branch"]
+          head_commit = event["workflow_run"]["head_sha"]
+
+          workflow_event = event["workflow_run"]["event"]
+          action = event["action"]
+          conclusion = event["workflow_run"]["conclusion"]
+
+          success = (workflow_event == "push" and
+                     action == "completed" and
+                     conclusion == "success")
+
+          print(f"{head_commit=}")
+          print(f"{head_branch=} -> {default_branch=}")
+          print(f"{workflow_event=} {action=}, {conclusion=}")
+          print(f"{success=}")
+
+          with open(os.environ["GITHUB_OUTPUT"], "w") as f:
+              print(f"SUCCESS={int(success)}", file=f)
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
+
+      - name: Cancel if not successful
+        if: ${{ steps.check-success.outputs.SUCCESS == '0' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh run cancel "$GITHUB_RUN_ID"
+
+      - name: Integrate into staging branch
+        if: ${{ steps.check-success.outputs.SUCCESS == '1' }}
+        env:
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          HEAD_COMMIT: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          git fetch origin "$HEAD_COMMIT"
+          git push origin "$HEAD_COMMIT:$DEFAULT_BRANCH" ":$HEAD_BRANCH"
