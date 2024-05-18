@@ -52,7 +52,7 @@ jobs:
         uses: redhat-actions/buildah-build@v2
         with:
           image: ${{ env.IMAGE_NAME }}
-          tags: ${{ github.ref_name }}
+          tags: ${{ contains(github.ref_name, '/') || github.ref_name }}
           labels: |
             org.opencontainers.image.revision=${{ github.sha }}
           containerfiles: |
