@@ -1,5 +1,9 @@
 name: Update default branch after required checks
 
+permissions:
+  contents: write
+  actions: write
+
 on:
   workflow_run:
     workflows:
