@@ -173,9 +173,9 @@ export const createBasicCredentialsSet = async (id: string, token: string) => {
 
     credentials = await response.json();
 
-    console.log(credentials);
+    console.log("Credentials:", credentials);
   } catch (error: any) {
-    console.log("e", error.message);
+    console.log("Error:", error.message);
 
     return undefined;
   }
@@ -332,7 +332,7 @@ export const getContTemp = async (
     contextMap['termotemp'] = newTemp;
   }
 
-  console.log(contextMap)
+  console.log("contextMap:", contextMap)
 
   let url = `${process.env.NEXT_PUBLIC_YGGIO_API_URL}/iotnodes/${nodeID}`;
 
@@ -361,7 +361,7 @@ export const changeTempOnTerm = async (
 ) => {
 
   const fullUrl = process.env.NEXT_PUBLIC_YGGIO_API_URL + url
-  console.log(fullUrl)
+  console.log("Temperature URL:", fullUrl)
 
   const response = await fetch(fullUrl, {
     method: "PUT",

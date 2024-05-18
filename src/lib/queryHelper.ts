@@ -100,7 +100,7 @@ export const fetchCo2Data = async (
   distance: number,
   xAxisOptions: any,
 ) => {
-  console.log(startTime);
+  console.log("CO2 data fetch start time:", startTime);
   const co2Data = await getNodeStats(
     accessToken,
     "6234b61cd68c97000897fca9",
