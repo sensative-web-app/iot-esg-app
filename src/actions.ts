@@ -23,6 +23,53 @@ export const getSession = async () => {
   return session;
 };
 
+export const login = async (
+  username: string,
+  password: string
+): Promise<void | {error: string}> => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_YGGIO_API_URL}/auth/local`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, password }),
+    },
+  );
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      return {error: "Invalid credentials"};
+    }
+    return {error: "Something went wrong"};
+  }
+  const responseBody = await response.json();
+
+  const session = await getIronSession<SessionData>(
+    cookies(),
+    sessionOptions,
+  );
+
+  const { token } = responseBody;
+  const nodes = await getNodes(token);
+  const role = await getRole(session.accessToken);
+
+  Object.assign(session, {
+    userID: (await getUser(token))._id,
+    role: role ? role : "tenant",
+    accessToken: token,
+    nodes: nodes.map((node: any) => ({
+      name: node.name,
+      id: node._id,
+    })),
+    expire: new Date().getTime() + 1000 * 60 * 60 * 5,
+  })
+
+  await session.save();
+  revalidatePath("/");
+};
+
 export const logout = async () => {
   const session = await getSession();
   session!.destroy();

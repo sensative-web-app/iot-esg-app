@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
+import { login } from "@/actions";
 
 export const Login = () => {
   const [username, setUsername] = useState("");
@@ -22,26 +23,16 @@ export const Login = () => {
   const router = useRouter();
 
   const handleClick = async (e: any) => {
+    e.preventDefault();
     setIsLoading(true);
-    console.log("1");
-    const response = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, password }),
-    });
-    const data = await response.json();
-    console.log("2");
-    if (data.status === 200) {
-      console.log("3");
-
-      e.preventDefault();
+    let result = await login(username, password);
+    if (result?.error) {
+      setIsLoading(false);
+      setErrorMessage(result.error);
+    }
+    else {
       router.push("/");
       router.refresh();
-    } else {
-      setIsLoading(false);
-      setErrorMessage(data.error);
     }
   };
 
