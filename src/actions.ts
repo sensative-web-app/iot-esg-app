@@ -279,7 +279,7 @@ export const getNodeStats = async (
   start?: number,
   end?: number,
   distance?: number,
-) => {
+): Promise<NonNullable<any> | undefined> => {
   let url = `${process.env.NEXT_PUBLIC_YGGIO_API_URL}/iotnodes/${nodeID}/stats?measurement=${measurement}`;
 
   if (start !== undefined) {
@@ -324,7 +324,7 @@ export const get2 = async () => { };
 export const getContTemp = async (
   token: string,
   nodeID: string,
-  contextMap: {termotemp?: number},
+  contextMap: any,
   newTemp: number,
 ) => {
 
@@ -383,8 +383,10 @@ export const changeTempOnTerm = async (
 export const getNodeByContext = async (
   token: string,
   context: string,
-) => {
-  let url = `${process.env.NEXT_PUBLIC_YGGIO_API_URL}/iotnodes?matchPattern=` + JSON.stringify({ [`contextMap.${context}`]: context });
+): Promise<any | null> => {
+
+  let pattern = JSON.stringify({[`contextMap.LNU_type_${context}`]: context });
+  let url = `${process.env.NEXT_PUBLIC_YGGIO_API_URL}/iotnodes?matchPattern=` + pattern;
 
   const response = await fetch(url, {
     method: "GET",
@@ -395,7 +397,8 @@ export const getNodeByContext = async (
   });
 
   if (response.ok) {
-    return await response.json();
+    const nodes = await response.json();
+    return nodes.length ? nodes[0] : undefined;
   } else {
     return undefined;
   }

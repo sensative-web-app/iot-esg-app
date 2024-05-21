@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-
+import { getSession } from "@/actions";
 import ChartWrapper from "./chart-wrapper";
 import {
   DropdownMenu,
@@ -13,7 +13,9 @@ import { Button } from "@/components/ui/button";
 import { SensorCard } from "./sensor-card";
 import { HumidityGauge } from "./humidity-gauge";
 import { useQuery } from "@tanstack/react-query";
-import { fetchNodes } from "@/lib/queryHelper";
+import { fetchNodes, getAllNodes } from "@/lib/queryHelper";
+import { WaterChartData } from "./water-chart";
+import { NodeType } from "@/lib/queryHelper";
 
 const componentConfig = [
   { name: "Temperature", component: SensorCard, visible: true },
@@ -25,20 +27,20 @@ const componentConfig = [
 
 export const TenantDashboard = ({
   token,
-
   setID,
+  userID
 }: {
   token: string;
-
   setID: string;
+  userID: string;
 }) => {
+  const desiredNodeTypes = [NodeType.temperature, NodeType.co2, NodeType.humidity, NodeType.warmwater, NodeType.coldwater, NodeType.electricity]
   const [visibleComponents, setVisibleComponents] = useState(
     componentConfig.map((config) => config.visible),
   );
-
-  const { data, isLoading } = useQuery({
-    queryKey: ["nodes"],
-    queryFn: () => fetchNodes(token),
+   const { data, isLoading } = useQuery({
+     queryKey: ["allNodes", userID],
+     queryFn: () => getAllNodes(token, desiredNodeTypes),
   });
 
   // Function to toggle component visibility
@@ -46,19 +48,13 @@ export const TenantDashboard = ({
     setVisibleComponents((prevState) => {
       const updatedVisibility = [...prevState];
       updatedVisibility[index] = !updatedVisibility[index];
-      return updatedVisibility;
+      return updatedVisibility
     });
   };
 
-  const temperatureNodes = data.filter((node: any) =>
-    Object.keys(node).some((key) => key.toLowerCase().includes("temperature")),
-  );
-
-  const temperatureNode = temperatureNodes[0];
-  const humidityNode = data.find((node: any) => node.name.includes("Comfort"));
-
-  const co2Node = data.find((node: any) => node.name.includes("CO2"));
-  // console.log(co2Node);
+const [temperatureNode, co2Node, humidityNode, warmWaterNode, coldWaterNode, electricityNode] = data
+  ? Array.from(data.values())
+  : [null, null, null, null, null, null];
 
   return (
     <div className="flex flex-col h-full w-full justify-center gap-8">
@@ -83,7 +79,7 @@ export const TenantDashboard = ({
         </DropdownMenu>
       </div>
       <div className="flex w-full justify-center items-center pt-6 gap-16 ">
-        {visibleComponents[0] && !isLoading && temperatureNode &&(
+        {visibleComponents[0] && temperatureNode &&(
           <SensorCard
             nodeID={temperatureNode._id}
             currentValue={temperatureNode.temperature.toFixed(1)}
@@ -93,15 +89,15 @@ export const TenantDashboard = ({
             sensorUnit="°C"
           />
         )}
-         {visibleComponents[1] && !isLoading && humidityNode && (
+         {visibleComponents[1] && humidityNode && (
           <HumidityGauge
             nodeID={humidityNode._id}
-            currentValue={humidityNode.relativeHumidity}
+            currentValue={humidityNode.humidity}
             setID={setID!}
-            sensorType="relativeHumidity"
+            sensorType="humidity"
           />
         )}
-        {visibleComponents[2] && !isLoading && co2Node && (
+        {visibleComponents[2]  && co2Node && (
           <SensorCard
             nodeID={co2Node._id}
             currentValue={co2Node.co2}
@@ -115,20 +111,22 @@ export const TenantDashboard = ({
 
       </div>
       <div className="w-full h-full justify-center items-center">
-        {visibleComponents[3] && (
+        {visibleComponents[3] && electricityNode && (
           <div className="w-full h-full justify-center items-center">
             <ChartWrapper
-              chart="electricityChart"
+              chart="electricityConsumptionChart"
               accessToken={token!}
+              chartData={electricityNode._id}
             ></ChartWrapper>
           </div>
         )}
-        {visibleComponents[4] && (
+        {visibleComponents[4] && (warmWaterNode || coldWaterNode) && (
           <div className="w-full h-full justify-center items-center my-10">
             <ChartWrapper
               chart="waterChart"
               accessToken={token!}
-            ></ChartWrapper>
+              chartData={{wWater: warmWaterNode?._id, cWater: coldWaterNode?._id} as WaterChartData}>
+            </ChartWrapper>
           </div>
         )}
       </div>

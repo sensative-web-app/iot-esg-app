@@ -1,9 +1,11 @@
-import { getNode, getNodeStats, getNodes, getContTemp } from "@/actions";
+import { getNode, getNodeStats, getNodes, getContTemp, getNodeByContext } from "@/actions";
+import { WaterChartData } from "@/components/home/tenant/water-chart";
 
 export const fetchChartData = async (
   accessToken: string,
   range: string,
   chart: string,
+  chartData: any
 ) => {
   const currentTimestamp = Date.now();
   let startTime;
@@ -55,17 +57,19 @@ export const fetchChartData = async (
     case "electricityChart":
       return fetchElectricityData(
         accessToken,
+        chartData,
         startTime,
         currentTimestamp,
         distance,
         xAxisOptions,
       );
     case "temperatureChart":
-      return fetchTemperatureData(accessToken, startTime, xAxisOptions);
+      return fetchTemperatureData(accessToken, chartData, startTime, xAxisOptions);
 
     case "co2Chart":
       return fetchCo2Data(
         accessToken,
+        chartData,
         startTime,
         currentTimestamp,
         distance,
@@ -75,6 +79,7 @@ export const fetchChartData = async (
     case "electricityConsumptionChart":
       return fetchElectricityConsumption(
         accessToken,
+        chartData,
         startTime,
         currentTimestamp,
         distance,
@@ -84,6 +89,7 @@ export const fetchChartData = async (
     case "waterChart":
       return fetchWaterData(
         accessToken,
+        chartData,
         startTime,
         currentTimestamp,
         range === "7d" ? 86400 : distance,
@@ -95,6 +101,7 @@ export const fetchChartData = async (
 
 export const fetchCo2Data = async (
   accessToken: string,
+  nodeID: string,
   startTime: number,
   currentTimestamp: number,
   distance: number,
@@ -103,7 +110,7 @@ export const fetchCo2Data = async (
   console.log("CO2 data fetch start time:", startTime);
   const co2Data = await getNodeStats(
     accessToken,
-    "6234b61cd68c97000897fca9",
+    nodeID,
     "co2",
     startTime,
     currentTimestamp,
@@ -133,13 +140,14 @@ export const fetchCo2Data = async (
 
 export const fetchTemperatureData = async (
   accessToken: string,
+  nodeID: string,
   startTime: number,
   xAxisOptions: any,
 ) => {
   // console.log(startTime);
   const temperatureData = await getNodeStats(
     accessToken,
-    "60a3ab8b007e8f00076009eb",
+    nodeID,
     "temperature",
     startTime,
   );
@@ -175,6 +183,7 @@ export const fetchTemperatureData = async (
 
 export const fetchElectricityData = async (
   accessToken: string,
+  nodeID: string,
   startTime: number,
   currentTimestamp: number,
   distance: number,
@@ -182,6 +191,7 @@ export const fetchElectricityData = async (
 ) => {
   const incrementalConsumptionData = await fetchConsumptioneData({
     accessToken,
+    nodeID,
     startTime,
     currentTimestamp,
     distance,
@@ -260,18 +270,20 @@ const formatData = (rawData: any) => {
 
 const fetchConsumptioneData = async ({
   accessToken,
+  nodeID,
   startTime,
   currentTimestamp,
   distance,
 }: {
   accessToken: string;
+  nodeID: string,
   startTime: number;
   currentTimestamp: number;
   distance: number;
 }) => {
   const rawElectricityConsumptionData = await getNodeStats(
     accessToken,
-    "65e830e40d1c07d883f0af86",
+    nodeID,
     "electricityConsumption",
     startTime,
     currentTimestamp,
@@ -297,6 +309,7 @@ const fetchConsumptioneData = async ({
 
 export const fetchElectricityConsumption = async (
   accessToken: string,
+  nodeID: string,
   startTime: number,
   currentTimestamp: number,
   distance: number,
@@ -304,6 +317,7 @@ export const fetchElectricityConsumption = async (
 ) => {
   const consumptionData = await fetchConsumptioneData({
     accessToken,
+    nodeID,
     startTime,
     currentTimestamp,
     distance,
@@ -336,12 +350,12 @@ export const fetchAirQualityData = async (token: string, id: string) => {
 
 export async function fetchNodes(token: string) {
   const nodes = await getNodes(token);
-
   return nodes;
 }
 
 export const fetchWaterData = async (
   accessToken: string,
+  chartData: WaterChartData,
   startTime: number,
   currentTimestamp: number,
   distance: number,
@@ -349,7 +363,7 @@ export const fetchWaterData = async (
 ) => {
   const cWaterData = await getNodeStats(
     accessToken,
-    "65e831450d1c07d883f0af94",
+    chartData.cWater,
     "currentVolume",
     startTime,
     currentTimestamp,
@@ -358,65 +372,74 @@ export const fetchWaterData = async (
 
   const wWaterData = await getNodeStats(
     accessToken,
-    "65e831800d1c07d883f0af9d",
+    chartData.wWater,
     "currentVolume",
     startTime,
     currentTimestamp,
     distance,
   );
-// console.log(cWaterData)
   const incrementalData = [];
-  for (let i = 1; i < cWaterData.length; i++) {
-    const prevValue = cWaterData[i - 1].value;
-    const currentValue = cWaterData[i].value;
-    const consumptionDiff = currentValue - prevValue;
-    const xValue = distance === 86400 ? new Date(cWaterData[i - 1].time).toISOString().split('T')[0] : new Date(cWaterData[i - 1].time);
-    incrementalData.push({
-      x: xValue,
-      y: consumptionDiff,
-    });
+  if (cWaterData !== undefined) {
+    for (let i = 1; i < cWaterData.length; i++) {
+      const prevValue = cWaterData[i - 1].value;
+      const currentValue = cWaterData[i].value;
+      const consumptionDiff = currentValue - prevValue;
+      const xValue = distance === 86400 ? new Date(cWaterData[i - 1].time).toISOString().split('T')[0] : new Date(cWaterData[i - 1].time);
+      incrementalData.push({
+        x: xValue,
+        y: consumptionDiff,
+      });
+    }
   }
- // console.log(incrementalData)
-  const incrementalDataW = [];
-  for (let i = 1; i < wWaterData.length; i++) {
-    const prevValue = wWaterData[i - 1].value;
-    const currentValue = wWaterData[i].value;
-    const consumptionDiff = currentValue - prevValue;
-    const xValue = distance === 86400 ? new Date(wWaterData[i - 1].time).toISOString().split('T')[0] : new Date(wWaterData[i - 1].time);
-    incrementalDataW.push({
-      x: xValue,
-      y: consumptionDiff,
-    });
+
+  const incrementalDataW = []
+  if (wWaterData !== undefined) {
+    for (let i = 1; i < wWaterData.length; i++) {
+      const prevValue = wWaterData[i - 1].value;
+      const currentValue = wWaterData[i].value;
+      const consumptionDiff = currentValue - prevValue;
+      const xValue = distance === 86400 ? new Date(wWaterData[i - 1].time).toISOString().split('T')[0] : new Date(wWaterData[i - 1].time);
+      incrementalDataW.push({
+        x: xValue,
+        y: consumptionDiff,
+      });
+    }
   }
 
   const combinedData: { x: Date | string, y: number }[] = [];
-  for (let i = 0; i < incrementalData.length; i++) {
-    combinedData.push({
-      x: incrementalData[i].x,
-      y: incrementalData[i].y + incrementalDataW[i].y,
-    });
+  if (incrementalData.length > 0 && incrementalDataW.length > 0) {
+    for (let i = 0; i < incrementalData.length; i++) {
+      combinedData.push({
+        x: incrementalData[i].x,
+        y: incrementalData[i].y + incrementalDataW[i].y,
+      });
+    }
   }
 
-  const labels = incrementalData.map((item: any) => item.x);
+  const longestArray = incrementalData.length > incrementalDataW.length
+    ? incrementalData
+    : incrementalDataW;
+
+  const labels = longestArray.map((item: any) => item.x);
 
   const data = {
     labels: labels,
     datasets: [
-      {
+      combinedData.length === 0 ? undefined : {
         label: "Total consumption",
         data: combinedData.map((item: any) => item.y),
         borderColor: "rgb(255, 255, 0)",
         backgroundColor: "rgba(82, 246, 59, 0.2)",
         yAxisID: "y",
       },
-      {
+      incrementalData.length === 0 ? undefined : {
         label: "Cold water",
         data: incrementalData.map((item: any) => item.y),
         borderColor: "rgb(75, 192, 192)",
         backgroundColor: "rgba(170, 225, 233, 0.7)",
         yAxisID: "y",
       },
-      {
+      incrementalDataW.length === 0 ? undefined : {
         label: "Warm water",
         data: incrementalDataW.map((item: any) => item.y),
         borderColor: "rgb(192, 75, 192)",
@@ -431,8 +454,32 @@ export const fetchWaterData = async (
 
 
 export const setContTemp = async (token: string, id: string, contextMap: object, newTemp: number) => {
- await getContTemp(token, id, contextMap, newTemp);
+  await getContTemp(token, id, contextMap, newTemp);
 };
 
+export enum NodeType {
+  "temperature",
+  "co2",
+  "humidity",
+  "warmwater",
+  "coldwater",
+  "electricity",
+}
 
-
+export async function getAllNodes(
+  accessToken: string,
+  nodesTypes: NodeType[],
+) {
+  let promises = nodesTypes.map((node: NodeType) => {
+    console.log("En grej!", node)
+    return getNodeByContext(accessToken, NodeType[nodesTypes[node]])
+  })
+  console.log("längt på promise:" , promises.length)
+  let results = await Promise.all(promises)
+  console.log("längt på result:" , results.length)
+  let things = new Map(nodesTypes.map((node: NodeType, index: number) => {
+    return [nodesTypes[node], results[index]]
+  }))
+  console.log("längt på things:" , things.size)
+  return things
+}

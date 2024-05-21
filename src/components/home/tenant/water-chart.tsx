@@ -25,6 +25,11 @@ ChartJS.register(
   TimeScale,
 );
 
+export interface WaterChartData {
+  wWater: string;
+  cWater: string;
+}
+
 const WaterChart = ({ data, text }: { data: any; text: string }) => {
   const chartData = data.data;
   const xAxisOptions = data.xAxisOptions;

@@ -1,4 +1,4 @@
-import { getNode, getSession } from "@/actions";
+import { getSession, getNodeByContext } from "@/actions";
 import { SideNav } from "@/components/nav/side-nav";
 import ChartWrapper from "@/components/home/tenant/chart-wrapper";
 import { SensorCard } from "@/components/home/tenant/sensor-card";
@@ -7,36 +7,34 @@ import { Thermostat } from "@/components/home/tenant/termostat";
 
 export default async function Index() {
   const session = await getSession();
-  const { accessToken, nodes } = session;
+  const { accessToken } = session;
 
-  const tempNodeID = nodes.find((node: any) =>
-    node.name.includes("CO2"),
-  )?.id;
+  const tempNode = await getNodeByContext(accessToken, "co2")
 
-  const termoNodeID = nodes.find((node: any) =>
-    node.name.includes("Termostat"),
-  )?.id;
+  const humNode = await getNodeByContext(accessToken, "humidity")
 
-  const node = await getNode(accessToken!, tempNodeID!);
-  const termoNode = await getNode(accessToken!, termoNodeID!);
+  const termoNode = await getNodeByContext(accessToken, "thermostat")
+
+
+
   return (
     <SideNav role={session.role}>
       <div className="text-primary flex min-h-[calc(100vh-64px)]  w-full flex-col items-center pt-6">
         <div className="w-full h-full justify-center">
           <div className="flex w-full justify-center gap-24">
-            {!node ? <></> : (
+            {!humNode ? <></> : (
               <HumidityGauge
-                nodeID={node._id}
-                currentValue={node.relativeHumidity}
+                nodeID={humNode._id}
+                currentValue={humNode.humidity}
                 setID={process.env.NEXT_PUBLIC_SET_ID!}
-                sensorType="relativeHumidity"
+                sensorType="humidity"
               />)
             }
-            {!node ? <></> :
+            {!tempNode ? <></> :
               <SensorCard
-                nodeID={node._id}
-                currentValue={node.temperature.toFixed(1)}
-                reportedAt={node.reportedAt}
+                nodeID={tempNode._id}
+                currentValue={tempNode.temperature.toFixed(1)}
+                reportedAt={tempNode.reportedAt}
                 setID={process.env.NEXT_PUBLIC_SET_ID!}
                 // userID={userID!}
                 sensorType="temperature"
@@ -51,7 +49,7 @@ export default async function Index() {
 
           </div>
           <div className="pt-10 w-full justify-center ">
-            <ChartWrapper chart="temperatureChart" accessToken={accessToken!} />
+            <ChartWrapper chart="temperatureChart" accessToken={accessToken!} chartData={tempNode._id} />
           </div>
         </div>
       </div>
