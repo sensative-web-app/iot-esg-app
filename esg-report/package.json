@@ -1,0 +1,11 @@
+{
+  "name": "esg-report",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node esg-report.js",
+    "watch": "while true; do npm run start; echo; npm run watch-once; done",
+    "watch-once": "inotifywait -e MODIFY *.js; sleep 0.3"
+  }
+}
