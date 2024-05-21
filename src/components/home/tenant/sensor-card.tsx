@@ -79,7 +79,7 @@ export const SensorCard = ({
   useEffect(() => {
     const intervalID = setInterval(updateFormattedReportedTime, 30000);
     return () => clearInterval(intervalID);
-  }, []);
+  }, [reportedTime]);
 
 
 
