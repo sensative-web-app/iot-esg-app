@@ -68,4 +68,6 @@ jobs:
           HEAD_COMMIT: ${{ github.event.workflow_run.head_sha }}
         run: |
           git fetch origin "$HEAD_COMMIT"
-          git push origin "$HEAD_COMMIT:$DEFAULT_BRANCH" ":$HEAD_BRANCH"
+          git push --atomic origin \
+            "$HEAD_COMMIT:$DEFAULT_BRANCH" \
+            ":$HEAD_BRANCH"
