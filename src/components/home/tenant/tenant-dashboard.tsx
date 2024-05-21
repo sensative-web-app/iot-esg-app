@@ -38,7 +38,7 @@ export const TenantDashboard = ({
     componentConfig.map((config) => config.visible),
   );
    const { data, isLoading } = useQuery({
-     queryKey: ["det här är den query som returnerar all nodes i det här fallet"],
+     queryKey: ["allNodes"],
      queryFn: () => getAllNodes(token, desiredNodeTypes),
   });
 
