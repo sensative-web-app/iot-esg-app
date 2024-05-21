@@ -3,9 +3,12 @@ import { SessionData, sessionOptions } from "@/lib/session";
 import { NextResponse } from "next/server";
 import { getNodes, getRole, getUser } from "@/actions";
 import { cookies } from "next/headers";
+import { revalidatePath } from "next/cache";
 
 export async function POST(request: Request) {
   const { username, password } = await request.json();
+
+  revalidatePath("/");
 
   try {
     const response = await fetch(
@@ -33,6 +36,8 @@ export async function POST(request: Request) {
     );
 
     const { token } = data;
+
+    session.userID = (await getUser(token))._id
 
     const nodes = await getNodes(token);
 

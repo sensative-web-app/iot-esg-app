@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 export const Login = () => {
   const [username, setUsername] = useState("");
@@ -38,7 +39,6 @@ export const Login = () => {
 
       e.preventDefault();
       router.push("/");
-      router.refresh();
       router.refresh();
     } else {
       setIsLoading(false);

@@ -4,7 +4,8 @@ import { TenantDashboard } from "./tenant/tenant-dashboard";
 import { Logout } from "../auth/logout";
 
 export const Dashboard = async ({ session }: { session: SessionData }) => {
-  const { accessToken, role } = session;
+  const { accessToken, role, userID } = session;
+  console.log(session)
 
   console.log(console.log(session.role));
 
@@ -14,10 +15,11 @@ export const Dashboard = async ({ session }: { session: SessionData }) => {
         <TenantDashboard
           setID={process.env.NEXT_PUBLIC_SET_ID!}
           token={accessToken!}
+          userID={userID}
         />
       )}
 
-      {session.role === "property-owner" && <PropertyOwner session={session} />}
+      {role === "property-owner" && <PropertyOwner session={session} />}
 
       {(!session.role || session.role === "") && (
         <>

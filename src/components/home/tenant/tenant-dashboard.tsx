@@ -14,7 +14,6 @@ import { SensorCard } from "./sensor-card";
 import { HumidityGauge } from "./humidity-gauge";
 import { useQuery } from "@tanstack/react-query";
 import { fetchNodes, getAllNodes } from "@/lib/queryHelper";
-import { getNodeByContext } from "@/actions";
 import { WaterChartData } from "./water-chart";
 import { NodeType } from "@/lib/queryHelper";
 
@@ -29,16 +28,18 @@ const componentConfig = [
 export const TenantDashboard = ({
   token,
   setID,
+  userID
 }: {
   token: string;
   setID: string;
+  userID: string;
 }) => {
   const desiredNodeTypes = [NodeType.temperature, NodeType.co2, NodeType.humidity, NodeType.warmwater, NodeType.coldwater, NodeType.electricity]
   const [visibleComponents, setVisibleComponents] = useState(
     componentConfig.map((config) => config.visible),
   );
    const { data, isLoading } = useQuery({
-     queryKey: ["allNodes"],
+     queryKey: ["allNodes", userID],
      queryFn: () => getAllNodes(token, desiredNodeTypes),
   });
 
