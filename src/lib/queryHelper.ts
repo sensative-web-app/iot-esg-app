@@ -1,4 +1,4 @@
-import { getNode, getNodeStats, getNodes, getContTemp, getNodeByContext } from "@/actions";
+import { getNode, getNodeStats, getNodes, storeCurrentTemperature, getNodeByContext } from "@/actions";
 import { WaterChartData } from "@/components/home/tenant/water-chart";
 
 export const fetchChartData = async (
@@ -454,7 +454,7 @@ export const fetchWaterData = async (
 
 
 export const setContTemp = async (token: string, id: string, contextMap: object, newTemp: number) => {
-  await getContTemp(token, id, contextMap, newTemp);
+  await storeCurrentTemperature(token, id, contextMap, newTemp);
 };
 
 export enum NodeType {
@@ -470,6 +470,7 @@ export async function getAllNodes(
   accessToken: string,
   nodesTypes: NodeType[],
 ) {
+  console.log("Oh man, we're getting all nodes! I can barely await!")
   let promises = nodesTypes.map((node: NodeType) => {
     console.log("En grej!", node)
     return getNodeByContext(accessToken, NodeType[nodesTypes[node]])

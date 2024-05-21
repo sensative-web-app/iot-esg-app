@@ -38,8 +38,11 @@ export const TenantDashboard = ({
   const [visibleComponents, setVisibleComponents] = useState(
     componentConfig.map((config) => config.visible),
   );
+   const queryKey = `allNodes ${userID}`
+   console.log("Query key:", queryKey)
    const { data, isLoading } = useQuery({
-     queryKey: ["allNodes", userID],
+     queryKey: [queryKey],
+     //queryKey: [Date.now().toString()],
      queryFn: () => getAllNodes(token, desiredNodeTypes),
   });
 

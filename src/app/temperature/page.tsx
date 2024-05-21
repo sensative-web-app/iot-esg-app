@@ -9,7 +9,7 @@ export default async function Index() {
   const session = await getSession();
   const { accessToken } = session;
 
-  const tempNode = await getNodeByContext(accessToken, "co2")
+  const tempNode = await getNodeByContext(accessToken, "temperature")
 
   const humNode = await getNodeByContext(accessToken, "humidity")
 

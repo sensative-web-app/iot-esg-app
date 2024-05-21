@@ -6,6 +6,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { encodeFormData } from "./lib/utils";
 import fs from "fs/promises"
+import { revalidatePath } from "next/cache";
 //import {createWriteStream} from "fs"
 //import {Writable} from "stream"
 
@@ -325,12 +326,13 @@ export const getList = () => {
 
 export const get2 = async () => { };
 
-export const getContTemp = async (
+export const storeCurrentTemperature = async (
   token: string,
   nodeID: string,
   contextMap: any,
   newTemp: number,
 ) => {
+  revalidatePath("/")
 
   if (Object.hasOwn(contextMap, 'termotemp')) {
     contextMap['termotemp'] = newTemp;
@@ -346,6 +348,7 @@ export const getContTemp = async (
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
+    cache: "no-store",
     body: JSON.stringify({
       contextMap: contextMap
     }),
@@ -366,6 +369,8 @@ export const changeTempOnTerm = async (
 
   const fullUrl = process.env.NEXT_PUBLIC_YGGIO_API_URL + url
   console.log("Temperature URL:", fullUrl)
+
+  revalidatePath("/")
 
   const response = await fetch(fullUrl, {
     method: "PUT",
@@ -388,6 +393,8 @@ export const getNodeByContext = async (
   token: string,
   context: string,
 ): Promise<any | null> => {
+  revalidatePath("/")
+
 
   let pattern = JSON.stringify({[`contextMap.LNU_type_${context}`]: context });
   let url = `${process.env.NEXT_PUBLIC_YGGIO_API_URL}/iotnodes?matchPattern=` + pattern;
@@ -398,6 +405,7 @@ export const getNodeByContext = async (
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
+    cache: "no-store",
   });
 
   if (response.ok) {
