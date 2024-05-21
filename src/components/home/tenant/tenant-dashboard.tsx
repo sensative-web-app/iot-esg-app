@@ -13,9 +13,10 @@ import { Button } from "@/components/ui/button";
 import { SensorCard } from "./sensor-card";
 import { HumidityGauge } from "./humidity-gauge";
 import { useQuery } from "@tanstack/react-query";
-import { fetchNodes } from "@/lib/queryHelper";
+import { fetchNodes, getAllNodes } from "@/lib/queryHelper";
 import { getNodeByContext } from "@/actions";
 import { WaterChartData } from "./water-chart";
+import { NodeType } from "@/lib/queryHelper";
 
 const componentConfig = [
   { name: "Temperature", component: SensorCard, visible: true },
@@ -25,46 +26,21 @@ const componentConfig = [
   { name: "Water chart", component: ChartWrapper, visible: true },
 ];
 
-export const TenantDashboard = async ({
+export const TenantDashboard = ({
   token,
   setID,
 }: {
   token: string;
   setID: string;
 }) => {
+  const desiredNodeTypes = [NodeType.temperature, NodeType.co2, NodeType.humidity, NodeType.warmwater, NodeType.coldwater, NodeType.electricity]
   const [visibleComponents, setVisibleComponents] = useState(
     componentConfig.map((config) => config.visible),
   );
-  // const { data, isLoading } = useQuery({
-  //   queryKey: ["nodes"],
-  //   queryFn: () => {
-  //     let temp = getNodeByContext(token, "temperature");
-  //     let ummm = temp.then(mytemp => {
-  //       console.log("Got the temp yo", mytemp);
-  //       return mytemp;
-  //     })
-
-  //     let mock = Promise.resolve({
-  //       _id: "12345",
-  //       temperature: 1000,
-  //       reportedAt: "2024-04-01",
-  //     })
-
-  //     let promise = Promise.all([
-  //       mock,
-  //       getNodeByContext(token, "co2"),
-  //       getNodeByContext(token, "humidity"),
-  //       getNodeByContext(token, "warmwater"),
-  //       getNodeByContext(token, "coldwater"),
-  //       getNodeByContext(token, "electricity")
-  //     ])
-  //     promise.then((grejs: any) => {
-  //       console.log("Åh fan, nu är det grejer på gång:", grejs);
-  //     })
-  //     promise.catch(ex => console.log("Oh no!", ex));
-  //     return promise;
-  //   }
-  // });
+   const { data, isLoading } = useQuery({
+     queryKey: ["det här är den query som returnerar all nodes i det här fallet"],
+     queryFn: () => getAllNodes(token, desiredNodeTypes),
+  });
 
   // Function to toggle component visibility
   const toggleComponentVisibility = (index: number) => {
@@ -74,21 +50,24 @@ export const TenantDashboard = async ({
       return updatedVisibility
     });
   };
-
- // const [temperatureNode, co2Node, humidityNode, warmWaterNode, coldWaterNode, electricityNode] = data ?? [null, null, null, null, null, null];
- console.log("one!")
-const temperatureNode = await getNodeByContext(token, "electricity")
-console.log("zwei!")
-const co2Node = await getNodeByContext(token, "co2");
-console.log("three!")
-const humidityNode = await getNodeByContext(token, "humidity");
-console.log("si!")
-const warmWaterNode = await getNodeByContext(token, "warmwater");
-console.log("go!")
-const coldWaterNode = await getNodeByContext(token, "coldwater");
-console.log("six!")
-const electricityNode = await getNodeByContext(token, "electricity");
-console.log("sieben!")
+console.log("här är dataaaaa: ", data?.size)
+//const [temperatureNode, co2Node, humidityNode, warmWaterNode, coldWaterNode, electricityNode] = [null, null, null, null, null, null];
+const [temperatureNode, co2Node, humidityNode, warmWaterNode, coldWaterNode, electricityNode] = data
+  ? Array.from(data.values())
+  : [null, null, null, null, null, null];
+//  console.log("one!")
+// const temperatureNode = await getNodeByContext(token, "electricity")
+// console.log("zwei!")
+// const co2Node = await getNodeByContext(token, "co2");
+// console.log("three!")
+// const humidityNode = await getNodeByContext(token, "humidity");
+// console.log("si!")
+// const warmWaterNode = await getNodeByContext(token, "warmwater");
+// console.log("go!")
+// const coldWaterNode = await getNodeByContext(token, "coldwater");
+// console.log("six!")
+// const electricityNode = await getNodeByContext(token, "electricity");
+// console.log("sieben!")
 
   return (
     <div className="flex flex-col h-full w-full justify-center gap-8">

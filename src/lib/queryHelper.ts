@@ -1,4 +1,4 @@
-import { getNode, getNodeStats, getNodes, getContTemp } from "@/actions";
+import { getNode, getNodeStats, getNodes, getContTemp, getNodeByContext } from "@/actions";
 import { WaterChartData } from "@/components/home/tenant/water-chart";
 
 export const fetchChartData = async (
@@ -456,3 +456,30 @@ export const fetchWaterData = async (
 export const setContTemp = async (token: string, id: string, contextMap: object, newTemp: number) => {
   await getContTemp(token, id, contextMap, newTemp);
 };
+
+export enum NodeType {
+  "temperature",
+  "co2",
+  "humidity",
+  "warmwater",
+  "coldwater",
+  "electricity",
+}
+
+export async function getAllNodes(
+  accessToken: string,
+  nodesTypes: NodeType[],
+) {
+  let promises = nodesTypes.map((node: NodeType) => {
+    console.log("En grej!", node)
+    return getNodeByContext(accessToken, NodeType[nodesTypes[node]])
+  })
+  console.log("längt på promise:" , promises.length)
+  let results = await Promise.all(promises)
+  console.log("längt på result:" , results.length)
+  let things = new Map(nodesTypes.map((node: NodeType, index: number) => {
+    return [nodesTypes[node], results[index]]
+  }))
+  console.log("längt på things:" , things.size)
+  return things
+}
