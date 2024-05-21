@@ -32,6 +32,7 @@ export const Thermostat = ({
         const url = temperatureUrls.get(newTemperature);
         if (url) {
             const response = await changeTempOnTerm(session, url);
+            console.log("Temperature change response:", response);
             setContTemp(session, nodeID, currentValue, newTemperature)
         }
     };
