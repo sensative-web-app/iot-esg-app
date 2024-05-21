@@ -30,17 +30,24 @@ async function main() {
 
   if (reportBaseIds.length === 0) {
     console.log("Creating new report base.")
-    let spec = reportBaseSpec("Standard-Connectivity", reportName)
+
+    //let spec = reportBaseSpec("Standard-Connectivity", reportName)
+
+    let fileData = await fs.readFile(filename)
+    console.log("file data", fileData)
+    console.log(await api.getReportBases())
+    let uploaded = await api.uploadReportTemplate("our_wonderful_template.xlsx", fileData)
+    console.log(uploaded)
+
+    //let templateFileNameOnTheServer = "ek223ur-test"
+    //let templateFileNameOnTheServer = "test.xlsx"
+    let spec = reportBaseSpec(uploaded.filename, reportName)
+    //let spec = reportBaseSpec(templateFileNameOnTheServer, reportName)
+
     let createdReportBase = await api.createReportBase(spec)
     reportBaseIds.push(createdReportBase._id)
     console.log(createdReportBase)
   }
-
-  //let fileData = await fs.readFile(filename)
-  //console.log(await api.getReportBases())
-  //let uploaded = await api.uploadReportTemplate("test.xlsx", fileData)
-  //console.log(uploaded)
-  //let spec = reportBaseSpec(uploaded.filename)
 
   console.log("Generating report:", reportBaseIds[0])
   let generatedReport = await api.generateReport(reportBaseIds[0])
@@ -154,6 +161,7 @@ async function login(username, password) {
       let url = "reports/report-bases/" +
         encodeURIComponent(reportBaseId) +
         "/generate"
+      console.log("url", url)
       return await request(url, requestBody)
     },
   }

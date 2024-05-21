@@ -19,7 +19,7 @@ export const Dashboard = async ({ session }: { session: SessionData }) => {
         />
       )}
 
-      {role === "property-owner" && <PropertyOwner session={session} />}
+      {role === "property owner" && <PropertyOwner accessToken={session.accessToken} />}
 
       {(!session.role || session.role === "") && (
         <>

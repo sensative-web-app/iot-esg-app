@@ -4,6 +4,10 @@ import { SessionData, sessionOptions } from "./lib/session";
 import { IronSession, getIronSession } from "iron-session";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { encodeFormData } from "./lib/utils";
+import fs from "fs/promises"
+//import {createWriteStream} from "fs"
+//import {Writable} from "stream"
 
 export const get = async () => { };
 
@@ -403,3 +407,145 @@ export const getNodeByContext = async (
     return undefined;
   }
 };
+
+export const checkReport = async (
+  token: string,
+) => {
+
+  // const response = await fetch(`${process.env.NEXT_PUBLIC_YGGIO_API_URL}/reports/report-bases`, {
+  //   method: "GET",
+  //   headers: {
+  //     Authorization: `Bearer ${token}`,
+  //     "Content-Type": "application/json",
+  //   },
+  // });
+
+  let api = createReportApiWrapper(token)
+  console.log("report bases", await api.getReportBases())
+
+  const reportBaseName = "esg-report-template"
+
+  // let localTemplateFilename = "esg-report-template.xlsx"
+  // let fileData = await fs.readFile(localTemplateFilename)
+  // let uploaded = await api.uploadReportTemplate("esg-report.xlsx", fileData)
+  // console.log(uploaded)
+  // let filename = uploaded.filename;
+  let filename = "Standard-Connectivity";
+
+  const newWonderfulReportBaseSpec = {
+    "name": reportBaseName,
+    "description": "Trying some stuff!", // Beskrivning
+    "fileName": filename, // Detta är namnet på filen som är bifogad i detta slack meddelande
+    "secondsBetweenPoints": 0, // Hur många sekunder mellan varje tidsserie punkt från varje iotnod, (I detta fall 0 sekunder som betyder _alla_ tidsseriepunkter för varje vald nod)
+    "sources": [  // Sources, en lista av olika filtreringar för hur och vad du vill hämta från våra databaser
+      {
+        "valueFunction": "mean", // en funktion riktad till våran tidsserie databas, `mean` värde för varje tidsseriepunkt i databasen
+        "query": "electricityConsumption", // ett query på vilka noder du vill hämta från ditt konto (i detta fallet hämtar vi alla noder som har fältet `rssi`.) (Det är detta queryt som fyller upp `iotnodeRawData` arket)
+        "fields": [ // Fields, en lista på fältnamn som du vill hämta från tiddserien. Här bestäms alltså vilka tidsseriefält du vill hämta, medans `query` hämtar alla fält, men bara det senaste värdena
+          {
+            "name": "electricityConsumption", // namnet på fältet du vill hämta ( i detta fall rssi )
+            "prettyName": "electricity Consumption", // Prettyname är till för hur det ska se ut i vårat UI eller excel arken ( här kan stå vad som helst )
+            "dataType": "float" // dataType, vilken datatyp är det på fältet, just nu har vi bara stöd för "float"
+          },
+          { // Samma gäller för snr, vill man lägga till fler går det bra också.
+            "name": "snr",
+            "prettyName": "SNR",
+            "dataType": "float"
+          }
+        ]
+      }
+    ]
+  }
+
+  // Delete existing report bases.
+  let reportBaseIds = (await api.getReportBases())
+    .filter((r: any) => r.name === reportBaseName)
+    .map((r: any) => r._id)
+  console.log("Existing report bases:", reportBaseIds)
+  let id
+  while (id = reportBaseIds.pop()) {
+    console.log(`Deleting report base: ${id}`)
+    console.log(await api.deleteReportBase(id))
+  }
+
+  let reportBase = await api.createReportBase(newWonderfulReportBaseSpec)
+  console.log("report base", reportBase)
+ console.log("report ID: ", reportBase._id)
+  let generatedReport = await api.generateReport(reportBase._id)
+  //console.log(generatedReport.downloadUrl)
+
+  return generatedReport.downloadUrl
+}
+
+function createReportApiWrapper(token: string) {
+  const apiUrl = process.env.NEXT_PUBLIC_YGGIO_API_URL;
+
+  async function request(path: string, data: any = undefined, headers={}, action: string | null =null) {
+    let response = await fetch(`${apiUrl}/${path}`, {
+      method: action ? action
+        : data !== undefined ? "POST"
+        : "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json, */*;q=0.9",
+        "Authorization": `Bearer ${token}`,
+        ...headers,
+      },
+      body: data === undefined ? undefined
+        : data instanceof Buffer ? data
+        : JSON.stringify(data),
+    })
+
+    let responseContentType = response.headers.get("Content-Type") ?? ""
+
+    if (response.status >= 400) {
+      let body = await response.text()
+      throw new Error(`Response status ${response.status}: ${body}`)
+    }
+    else if (responseContentType.includes("json")) {
+      return await response.json()
+    }
+    else {
+      return await response.text()
+    }
+  }
+
+  return {
+    async getReportBases() {
+      return await request("reports/report-bases")
+    },
+    async createReportBase(data: any) {
+      return await request("reports/report-bases", data)
+    },
+    async deleteReportBase(id: string) {
+      let url = "reports/report-bases/" + encodeURIComponent(id)
+      return await request(url, undefined, {}, "DELETE")
+    },
+    async uploadReportTemplate(filename: string, buffer: Buffer) {
+      // Uploading is currently broken due to a confirmed Yggio bug
+      // which corrupts the file.
+      const xlsxType = ("application/vnd.openxmlformats-officedocument" +
+                        ".spreadsheetml.sheet")
+      let formData = encodeFormData(filename, xlsxType, buffer)
+      let text = await request("reports/file/upload", formData.body, {
+        "Content-Type": formData.contentType,
+      })
+      let pattern = /File with name "([^"]+)" uploaded successfully/
+      return {filename: text.match(pattern)[1]}
+    },
+    async generateReport(reportBaseId: string) {
+      let periodDays = 365
+      let now = Date.now()
+      let requestBody = {
+        "startTime": now - periodDays * 24 * 3600 * 1000,
+        "endTime": now,
+        "includeRawData": true,
+        queryParametersInputs: {},
+      }
+      let url = "reports/report-bases/" +
+        encodeURIComponent(reportBaseId) +
+        "/generate"
+      return await request(url, requestBody)
+    },
+  }
+}
