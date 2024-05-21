@@ -81,7 +81,7 @@ const [temperatureNode, co2Node, humidityNode, warmWaterNode, coldWaterNode, ele
         {visibleComponents[0] && temperatureNode &&(
           <SensorCard
             nodeID={temperatureNode._id}
-            currentValue={temperatureNode.temperature}
+            currentValue={temperatureNode.temperature.toFixed(1)}
             reportedAt={temperatureNode.reportedAt}
             setID={setID!}
             sensorType="temperature"
