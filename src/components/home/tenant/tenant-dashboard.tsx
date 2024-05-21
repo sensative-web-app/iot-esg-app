@@ -50,24 +50,10 @@ export const TenantDashboard = ({
       return updatedVisibility
     });
   };
-console.log("här är dataaaaa: ", data?.size)
-//const [temperatureNode, co2Node, humidityNode, warmWaterNode, coldWaterNode, electricityNode] = [null, null, null, null, null, null];
+
 const [temperatureNode, co2Node, humidityNode, warmWaterNode, coldWaterNode, electricityNode] = data
   ? Array.from(data.values())
   : [null, null, null, null, null, null];
-//  console.log("one!")
-// const temperatureNode = await getNodeByContext(token, "electricity")
-// console.log("zwei!")
-// const co2Node = await getNodeByContext(token, "co2");
-// console.log("three!")
-// const humidityNode = await getNodeByContext(token, "humidity");
-// console.log("si!")
-// const warmWaterNode = await getNodeByContext(token, "warmwater");
-// console.log("go!")
-// const coldWaterNode = await getNodeByContext(token, "coldwater");
-// console.log("six!")
-// const electricityNode = await getNodeByContext(token, "electricity");
-// console.log("sieben!")
 
   return (
     <div className="flex flex-col h-full w-full justify-center gap-8">
