@@ -33,12 +33,12 @@ export default function ChartWrapper({
   const [selectedRange, setSelectedRange] = useState("7d");
   const queryClient = new QueryClient();
   let { data, isLoading, refetch } = useQuery({
-    queryKey: [`${chart}`, selectedRange],
+    queryKey: [`${chart}`, selectedRange, chartData],
     queryFn: () => fetchChartData(accessToken, selectedRange, chart, chartData),
   });
 
   const handleRangeChange = async (range: string) => {
-    queryClient.invalidateQueries({ queryKey: [`${chart}`, range] });
+    queryClient.invalidateQueries({ queryKey: [`${chart}`, range, chartData] });
     setSelectedRange(range);
     const refetchedData = await refetch();
     data = refetchedData.data;
