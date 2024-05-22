@@ -1,7 +1,7 @@
 "use client";
 
 import { formatDistanceToNow } from "date-fns";
-import { useState, Suspense, useEffect } from "react";
+import { useState, Suspense, useEffect, useCallback } from "react";
 import { CardContent, Card } from "@/components/ui/card";
 import { ErrorBoundary } from "react-error-boundary";
 import { useMqtt } from "@/lib/mqtt";
@@ -63,25 +63,21 @@ export const SensorCard = ({
 
   useMqtt(setID, nodeID, onMessage);
 
-  const updateFormattedReportedTime = () => {
+  const updateFormattedReportedTime = useCallback(() => {
     const formattedTime = formatDistanceToNow(new Date(reportedTime), {
       addSuffix: true,
     });
     setFormattedReportedTime(formattedTime);
-  };
-
+  }, [reportedTime]);
 
   useEffect(() => {
     updateFormattedReportedTime();
-  }, [reportedTime]);
-
+  }, [updateFormattedReportedTime]);
 
   useEffect(() => {
     const intervalID = setInterval(updateFormattedReportedTime, 30000);
     return () => clearInterval(intervalID);
-  }, [reportedTime]);
-
-
+  }, [updateFormattedReportedTime]);
 
   return (
     <ErrorBoundary fallback={<div></div>}>
