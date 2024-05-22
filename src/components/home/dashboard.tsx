@@ -5,7 +5,6 @@ import { Logout } from "../auth/logout";
 
 export const Dashboard = async ({ session }: { session: SessionData }) => {
   const { accessToken, role, userID } = session;
-  console.log(session)
 
   console.log("Session role:", session.role);
 

@@ -480,14 +480,10 @@ export async function getAllNodes(
   accessToken: string,
   nodesTypes: NodeType[],
 ) {
-  console.log("Oh man, we're getting all nodes! I can barely await!")
   let promises = nodesTypes.map((node: NodeType) => {
-    console.log("En grej!", node)
     return getNodeByContext(accessToken, NodeType[nodesTypes[node]])
   })
-  console.log("längt på promise:" , promises.length)
   let results = await Promise.all(promises)
-  console.log("längt på result:" , results.length)
   let things = new Map(nodesTypes.map((node: NodeType, index: number) => {
     return [nodesTypes[node], results[index]]
   }))
