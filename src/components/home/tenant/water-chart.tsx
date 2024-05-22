@@ -26,8 +26,8 @@ ChartJS.register(
 );
 
 export interface WaterChartParams {
-  wWater: string;
-  cWater: string;
+  wWater: string | null | undefined;
+  cWater: string | null | undefined;
 }
 
 const WaterChart = ({ data, text }: { data: any; text: string }) => {

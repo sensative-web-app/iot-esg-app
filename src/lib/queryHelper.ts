@@ -365,7 +365,7 @@ export const fetchWaterData = async (
   distance: number,
   xAxisOptions: any,
 ) => {
-  const cWaterData = await getNodeStats(
+  const cWaterData = chartParams.cWater && await getNodeStats(
     accessToken,
     chartParams.cWater,
     "currentVolume",
@@ -374,7 +374,7 @@ export const fetchWaterData = async (
     distance,
   );
 
-  const wWaterData = await getNodeStats(
+  const wWaterData = chartParams.wWater && await getNodeStats(
     accessToken,
     chartParams.wWater,
     "currentVolume",
@@ -382,8 +382,9 @@ export const fetchWaterData = async (
     currentTimestamp,
     distance,
   );
+
   const incrementalData = [];
-  if (cWaterData !== undefined) {
+  if (cWaterData) {
     for (let i = 1; i < cWaterData.length; i++) {
       const prevValue = cWaterData[i - 1].value;
       const currentValue = cWaterData[i].value;
@@ -397,7 +398,7 @@ export const fetchWaterData = async (
   }
 
   const incrementalDataW = []
-  if (wWaterData !== undefined) {
+  if (wWaterData) {
     for (let i = 1; i < wWaterData.length; i++) {
       const prevValue = wWaterData[i - 1].value;
       const currentValue = wWaterData[i].value;
@@ -426,34 +427,39 @@ export const fetchWaterData = async (
 
   const labels = longestArray.map((item: any) => item.x);
 
-  const data = {
-    labels: labels,
-    datasets: [
-      combinedData.length === 0 ? undefined : {
-        label: "Total consumption",
-        data: combinedData.map((item: any) => item.y),
-        borderColor: "rgb(255, 255, 0)",
-        backgroundColor: "rgba(82, 246, 59, 0.2)",
-        yAxisID: "y",
-      },
-      incrementalData.length === 0 ? undefined : {
-        label: "Cold water",
-        data: incrementalData.map((item: any) => item.y),
-        borderColor: "rgb(75, 192, 192)",
-        backgroundColor: "rgba(170, 225, 233, 0.7)",
-        yAxisID: "y",
-      },
-      incrementalDataW.length === 0 ? undefined : {
-        label: "Warm water",
-        data: incrementalDataW.map((item: any) => item.y),
-        borderColor: "rgb(192, 75, 192)",
-        backgroundColor: "rgba(255, 115, 115, 0.7)",
-        yAxisID: "y",
-      }
-    ],
-  };
+  const datasets: any[] = [];
 
-  return { data, xAxisOptions };
+  if (combinedData.length > 0) {
+    datasets.push({
+      label: "Total consumption",
+      data: combinedData.map((item: any) => item.y),
+      borderColor: "rgb(255, 255, 0)",
+      backgroundColor: "rgba(82, 246, 59, 0.2)",
+      yAxisID: "y",
+    });
+  }
+
+  if (incrementalData.length > 0) {
+    datasets.push({
+      label: "Cold water",
+      data: incrementalData.map((item: any) => item.y),
+      borderColor: "rgb(75, 192, 192)",
+      backgroundColor: "rgba(170, 225, 233, 0.7)",
+      yAxisID: "y",
+    });
+  }
+
+  if (incrementalDataW.length > 0) {
+    datasets.push({
+      label: "Warm water",
+      data: incrementalDataW.map((item: any) => item.y),
+      borderColor: "rgb(192, 75, 192)",
+      backgroundColor: "rgba(255, 115, 115, 0.7)",
+      yAxisID: "y",
+    });
+  }
+
+  return { data: { labels, datasets }, xAxisOptions };
 };
 
 
