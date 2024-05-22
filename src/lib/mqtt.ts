@@ -10,6 +10,11 @@ export const useMqtt = (setID: string, nodeID: string, onMessage: Function) => {
     });
 
     client.on("connect", () => {
+      // After calling the end method, which puts the client in the
+      // disconnecting state, the connect event can still be triggered
+      // but the subscribe method throws an error.
+      if (client.disconnecting) return;
+
       client.subscribe(topic, (err) => {
         if (err) {
           console.error("Failed to subscribe to topic", err);
