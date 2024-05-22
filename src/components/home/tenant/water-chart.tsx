@@ -25,7 +25,7 @@ ChartJS.register(
   TimeScale,
 );
 
-export interface WaterChartData {
+export interface WaterChartParams {
   wWater: string;
   cWater: string;
 }

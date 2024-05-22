@@ -49,7 +49,7 @@ export default async function Index() {
 
           </div>
           <div className="pt-10 w-full justify-center ">
-            <ChartWrapper chart="temperatureChart" accessToken={accessToken!} chartData={tempNode._id} />
+            <ChartWrapper chart="temperatureChart" accessToken={accessToken!} chartParams={tempNode._id} />
           </div>
         </div>
       </div>

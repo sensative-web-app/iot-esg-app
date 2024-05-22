@@ -11,7 +11,7 @@ export default async function Index() {
         <ChartWrapper
           accessToken={session.accessToken}
           chart="electricityConsumptionChart"
-          chartData={elecNode._id}
+          chartParams={elecNode._id}
         />
       </div>
     </SideNav>

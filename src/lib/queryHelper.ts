@@ -1,11 +1,11 @@
 import { getNode, getNodeStats, getNodes, storeCurrentTemperature, getNodeByContext } from "@/actions";
-import { WaterChartData } from "@/components/home/tenant/water-chart";
+import { WaterChartParams } from "@/components/home/tenant/water-chart";
 
 export const fetchChartData = async (
   accessToken: string,
   range: string,
   chart: string,
-  chartData: any
+  chartParams: unknown
 ) => {
   const currentTimestamp = Date.now();
   let startTime;
@@ -57,19 +57,24 @@ export const fetchChartData = async (
     case "electricityChart":
       return fetchElectricityData(
         accessToken,
-        chartData,
+        chartParams as string,
         startTime,
         currentTimestamp,
         distance,
         xAxisOptions,
       );
     case "temperatureChart":
-      return fetchTemperatureData(accessToken, chartData, startTime, xAxisOptions);
+      return fetchTemperatureData(
+        accessToken,
+        chartParams as string,
+        startTime,
+        xAxisOptions
+      );
 
     case "co2Chart":
       return fetchCo2Data(
         accessToken,
-        chartData,
+        chartParams as string,
         startTime,
         currentTimestamp,
         distance,
@@ -79,7 +84,7 @@ export const fetchChartData = async (
     case "electricityConsumptionChart":
       return fetchElectricityConsumption(
         accessToken,
-        chartData,
+        chartParams as string,
         startTime,
         currentTimestamp,
         distance,
@@ -89,13 +94,12 @@ export const fetchChartData = async (
     case "waterChart":
       return fetchWaterData(
         accessToken,
-        chartData,
+        chartParams as WaterChartParams,
         startTime,
         currentTimestamp,
         range === "7d" ? 86400 : distance,
         xAxisOptions,
       );
-    //return fetchTemperatureData(accessToken, range);
   }
 };
 
@@ -355,7 +359,7 @@ export async function fetchNodes(token: string) {
 
 export const fetchWaterData = async (
   accessToken: string,
-  chartData: WaterChartData,
+  chartParams: WaterChartParams,
   startTime: number,
   currentTimestamp: number,
   distance: number,
@@ -363,7 +367,7 @@ export const fetchWaterData = async (
 ) => {
   const cWaterData = await getNodeStats(
     accessToken,
-    chartData.cWater,
+    chartParams.cWater,
     "currentVolume",
     startTime,
     currentTimestamp,
@@ -372,7 +376,7 @@ export const fetchWaterData = async (
 
   const wWaterData = await getNodeStats(
     accessToken,
-    chartData.wWater,
+    chartParams.wWater,
     "currentVolume",
     startTime,
     currentTimestamp,

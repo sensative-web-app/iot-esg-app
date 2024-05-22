@@ -49,7 +49,7 @@ export default async function Index() {
           )}
           </div>
           <div className="pt-10 w-full justify-center ">
-            <ChartWrapper chart="co2Chart" accessToken={accessToken!} chartData={co2Node._id}/>
+            <ChartWrapper chart="co2Chart" accessToken={accessToken!} chartParams={co2Node._id}/>
           </div>
         </div>
       </div>

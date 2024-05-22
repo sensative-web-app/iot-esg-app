@@ -14,7 +14,7 @@ import { SensorCard } from "./sensor-card";
 import { HumidityGauge } from "./humidity-gauge";
 import { useQuery } from "@tanstack/react-query";
 import { fetchNodes, getAllNodes } from "@/lib/queryHelper";
-import { WaterChartData } from "./water-chart";
+import { WaterChartParams } from "./water-chart";
 import { NodeType } from "@/lib/queryHelper";
 
 const componentConfig = [
@@ -119,7 +119,7 @@ const [temperatureNode, co2Node, humidityNode, warmWaterNode, coldWaterNode, ele
             <ChartWrapper
               chart="electricityConsumptionChart"
               accessToken={token!}
-              chartData={electricityNode._id}
+              chartParams={electricityNode._id}
             ></ChartWrapper>
           </div>
         )}
@@ -128,7 +128,7 @@ const [temperatureNode, co2Node, humidityNode, warmWaterNode, coldWaterNode, ele
             <ChartWrapper
               chart="waterChart"
               accessToken={token!}
-              chartData={{wWater: warmWaterNode?._id, cWater: coldWaterNode?._id} as WaterChartData}>
+              chartParams={{wWater: warmWaterNode?._id, cWater: coldWaterNode?._id} as WaterChartParams}>
             </ChartWrapper>
           </div>
         )}

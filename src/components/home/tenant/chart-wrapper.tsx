@@ -24,21 +24,21 @@ import WaterChart from "./water-chart";
 export default function ChartWrapper({
   accessToken,
   chart,
-  chartData,
+  chartParams,
 }: {
   accessToken: string;
   chart: string;
-  chartData: any;
+  chartParams: unknown;
 }) {
   const [selectedRange, setSelectedRange] = useState("7d");
   const queryClient = new QueryClient();
   let { data, isLoading, refetch } = useQuery({
-    queryKey: [`${chart}`, selectedRange, chartData],
-    queryFn: () => fetchChartData(accessToken, selectedRange, chart, chartData),
+    queryKey: [`${chart}`, selectedRange, chartParams],
+    queryFn: () => fetchChartData(accessToken, selectedRange, chart, chartParams),
   });
 
   const handleRangeChange = async (range: string) => {
-    queryClient.invalidateQueries({ queryKey: [`${chart}`, range, chartData] });
+    queryClient.invalidateQueries({ queryKey: [`${chart}`, range, chartParams] });
     setSelectedRange(range);
     const refetchedData = await refetch();
     data = refetchedData.data;
