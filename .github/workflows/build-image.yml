@@ -94,6 +94,8 @@ jobs:
           APP_URL: http://localhost:3000
           NEXT_PUBLIC_YGGIO_API_URL: https://staging.yggio.net/api
           NEXT_PUBLIC_YGGIO_MQTT_URL: "wss://mqtt.staging.yggio.net:15676/ws"
+          NEXT_PUBLIC_YGGIO_MQTT_USERNAME: "${{ secrets.YGGIO_MQTT_USERNAME }}"
+          NEXT_PUBLIC_YGGIO_MQTT_PASSWORD: "${{ secrets.YGGIO_MQTT_PASSWORD }}"
           NEXT_PUBLIC_SET_ID: "6614153edba0fc9f32a7232e"
           SECRET_COOKIE_PASSWORD: "${{ secrets.SECRET_COOKIE_PASSWORD }}"
 

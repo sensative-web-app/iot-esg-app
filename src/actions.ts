@@ -212,8 +212,8 @@ export const createBasicCredentialsSet = async (id: string, token: string) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: `iot-esg-app-set`,
-          password: "super-secret-password",
+          username: process.env.NEXT_PUBLIC_YGGIO_MQTT_USERNAME,
+          password: process.env.NEXT_PUBLIC_YGGIO_MQTT_PASSWORD,
         }),
       },
     );

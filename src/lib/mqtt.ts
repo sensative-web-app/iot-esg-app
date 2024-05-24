@@ -1,9 +1,14 @@
 import { useEffect } from "react";
 import mqtt, { MqttClient } from "mqtt";
 
-const connection = createMqttConnection(() => mqtt.connect(
-    process.env.NEXT_PUBLIC_YGGIO_MQTT_URL!,
-    { username: "iot-esg-app-set", password: "super-secret-password", }));
+const connection = createMqttConnection(() => {
+  const url = process.env.NEXT_PUBLIC_YGGIO_MQTT_URL!;
+  const options = {
+    username: process.env.NEXT_PUBLIC_YGGIO_MQTT_USERNAME,
+    password: process.env.NEXT_PUBLIC_YGGIO_MQTT_PASSWORD,
+  };
+  return mqtt.connect(url, options);
+});
 
 export const useMqtt = (setID: string, nodeID: string, onMessage: MessageCallback) => {
   useEffect(() => {
