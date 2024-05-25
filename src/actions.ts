@@ -53,7 +53,7 @@ export const login = async (
 
   const { token } = responseBody;
   const nodes = await getNodes(token);
-  const role = await getRole(session.accessToken);
+  const role = await getRole(token);
 
   Object.assign(session, {
     userID: (await getUser(token))._id,
