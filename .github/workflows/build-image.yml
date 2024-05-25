@@ -122,8 +122,10 @@ jobs:
       - name: Run Cypress E2E tests
         env:
           cypress_localhost_url: http://localhost:3000/
-          #cypress_username: LNU_hyresgast_1
-          #cypress_password: "${{ secrets.CYPRESS_PASSWORD }}"
+          cypress_tenant_username: LNU_hyresgast_1
+          cypress_tenant_password: "${{ secrets.CYPRESS_TENANT_PASSWORD }}"
+          cypress_propertyowner_username: lnu_fastighetsbolag_1
+          cypress_propertyowner_password: "${{ secrets.CYPRESS_PROPERTYOWNER_PASSWORD }}"
         uses: cypress-io/github-action@v6
 
       - name: Get app container logs
