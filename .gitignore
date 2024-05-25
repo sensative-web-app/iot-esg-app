@@ -39,3 +39,6 @@ next-env.d.ts
 
 /cypress/screenshots
 /cypress/videos
+
+# LibreOffice lock files
+.~lock*
