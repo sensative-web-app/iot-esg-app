@@ -4,77 +4,65 @@ import dynamic from "next/dynamic";
 import React, { Suspense, useState } from 'react';
 import Image from "next/image";
 const GaugeComponent = dynamic(() => import("react-gauge-component"), {
-    ssr: false,
+  ssr: false,
 });
 import { useMqtt } from "@/lib/mqtt";
 import { ErrorBoundary } from "react-error-boundary";
 import { Card } from "@/components/ui/card";
 import humLogo from "../../../../public/humidity2.png"
 
-
 export const HumidityGauge = ({
-    nodeID,
-    currentValue,
-    setID,
-    sensorType
+  nodeID,
+  currentValue,
+  setID,
+  sensorType
 }: {
-    nodeID: string;
-    currentValue: number;
-    setID: string;
-    sensorType: string;
+  nodeID: string;
+  currentValue: number;
+  setID: string;
+  sensorType: string;
 }) => {
-    const [value, setValue] = useState(currentValue);
+  const [value, setValue] = useState(currentValue);
 
+  const onMessage = (topic: any, message: any) => {
+    const { iotnode } = JSON.parse(message.toString());
+    const sensorValue = iotnode[sensorType];
+    setValue(sensorValue);
+  };
 
-    console.log("this is nodeID " + nodeID)
+  useMqtt(setID, nodeID, onMessage);
 
-    const onMessage = (topic: any, message: any) => {
-        const { iotnode } = JSON.parse(message.toString());
+  return !nodeID ? <></> : (
+    <div className={`bg-muted rounded-xl`}>
+      <Card className="w-80 h-48 bg-muted rounded-2xl ">
+        <div className="flex items-center justify-center flex-col relative h-full">
+          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 mt-2  font-semibold">
+            Humidity
+          </div>
+          <div className="flex items-center justify-center flex-1">
 
-        console.log("iotNode value: " + iotnode)
-
-        const sensorValue = iotnode[sensorType];
-        console.log(`update ${sensorType}: ${sensorValue}`);
-
-        setValue(sensorValue);
-
-    };
-
-    useMqtt(setID, nodeID, onMessage);
-
-    return !nodeID ? <></> : (
-        <ErrorBoundary fallback={<div></div>}>
-            <Card className="w-90 rounded-2xl pt-4 flex items-center bg-muted justify-center">
-                <div className="flex items-center justify-center w-full">
-                    <Image
-                        src={humLogo}
-                        alt="Humidity logo"
-                        width={65}
-                        height={65}
-                        className="ml-6"
-                    />
-                    <Suspense fallback={<div>Loading...</div>}> {/* Suspense while GaugeComponent is loading */}
-                        <GaugeComponent
-                            type="semicircle"
-                            arc={{
-                                colorArray: ['#FF2121', '#FFA500', '#FFFF00', '#00FF15', '#FFFF00', '#FFA500', '#FF2121'], // Red, Orange, Yellow, Green, Yellow, Red
-                                padding: 0.02,
-                                subArcs: [
-                                    { limit: 20 },   // Yellow
-                                    { limit: 30 },   // Orange
-                                    { limit: 40 },   // Green
-                                    { limit: 60 },   // Orange
-                                    { limit: 70 },   // Yellow
-                                    { limit: 80 },
-                                    { limit: 90 }   // Red
-                                ]
-                            }}
-                            pointer={{ type: "blob", animationDelay: 0 }}
-                            value={value}
-                        />
-                    </Suspense>
-                </div>
-            </Card>
-        </ErrorBoundary>
-    );
+            <Suspense fallback={<div>Loading...</div>}>
+              <GaugeComponent
+                arc={{
+                  colorArray: ['#FF2121', '#FFA500', '#FFFF00', '#00FF15', '#FFFF00', '#FFA500', '#FF2121'], // Red, Orange, Yellow, Green, Yellow, Red
+                  padding: 0.02,
+                  subArcs: [
+                    { limit: 20 },   // Yellow
+                    { limit: 30 },   // Orange
+                    { limit: 40 },   // Green
+                    { limit: 60 },   // Orange
+                    { limit: 70 },   // Yellow
+                    { limit: 80 },
+                    { limit: 90 }   // Red
+                  ]
+                }}
+                pointer={{ type: "arrow", elastic: true, animationDelay: 0, animate: false }}
+                value={value}
+              />
+            </Suspense>
+          </div>
+        </div>
+      </Card>
+    </div>
+  );
 };

@@ -66,39 +66,6 @@ export function AirGauge({ token, id }: { token: string; id: string }) {
           }}
         />
       )}
-      {/* <GaugeComponent
-        id="air-quality-gauge"
-        value={iaq}
-        maxValue={maxAirQuality}
-        arc={{
-          subArcs: airQualityRanges,
-          width: 0.3,
-          padding: 0.05,
-          cornerRadius: 7,
-        }}
-        labels={{
-          valueLabel: {
-            formatTextValue: (value) => `${Math.round(value)} IAQ`,
-            style: {
-              fontSize: "24px",
-              fill: "#FFFFFF", // Changed text color to white
-              textShadow:
-                "black 1px 1px 0px, black 0px 0px 2.5em, black 0px 0px 0.2em",
-            },
-          },
-          tickLabels: {
-            type: "outer",
-            ticks: [
-              { value: 50 },
-              { value: 100 },
-              { value: 150 },
-              { value: 200 },
-              { value: 250 },
-              { value: 300 },
-            ],
-          },
-        }}
-      /> */}
     </div>
   );
 }

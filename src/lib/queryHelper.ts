@@ -68,6 +68,8 @@ export const fetchChartData = async (
         accessToken,
         chartParams as string,
         startTime,
+        currentTimestamp,
+        distance,
         xAxisOptions
       );
 
@@ -146,6 +148,8 @@ export const fetchTemperatureData = async (
   accessToken: string,
   nodeID: string,
   startTime: number,
+  currentTimestamp: number,
+  distance: number,
   xAxisOptions: any,
 ) => {
   // console.log(startTime);
@@ -154,6 +158,8 @@ export const fetchTemperatureData = async (
     nodeID,
     "temperature",
     startTime,
+    currentTimestamp,
+    distance,
   );
   // console.log(temperatureData);
 
@@ -487,6 +493,6 @@ export async function getAllNodes(
   let things = new Map(nodesTypes.map((node: NodeType, index: number) => {
     return [nodesTypes[node], results[index]]
   }))
-  console.log("längt på things:" , things.size)
+  console.log("längt på things:", things.size)
   return things
 }

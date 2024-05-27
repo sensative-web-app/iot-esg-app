@@ -16,12 +16,11 @@ export default async function Index() {
   const termoNode = await getNodeByContext(accessToken, "thermostat")
 
 
-
   return (
     <SideNav role={session.role}>
       <div className="text-primary flex min-h-[calc(100vh-64px)]  w-full flex-col items-center pt-6">
         <div className="w-full h-full justify-center">
-          <div className="flex w-full justify-center gap-24">
+          <div className="flex w-full justify-center gap-8">
             {!humNode ? <></> : (
               <HumidityGauge
                 nodeID={humNode._id}

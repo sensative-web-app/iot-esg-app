@@ -22,7 +22,6 @@ const componentConfig = [
   { name: "Humidity", component: HumidityGauge, visible: true },
   { name: "Co2", component: SensorCard, visible: true },
   { name: "Electricity chart", component: ChartWrapper, visible: true },
-  { name: "Water chart", component: ChartWrapper, visible: true },
 ];
 
 export const TenantDashboard = ({
@@ -38,11 +37,11 @@ export const TenantDashboard = ({
   const [visibleComponents, setVisibleComponents] = useState(
     componentConfig.map((config) => config.visible),
   );
-   const queryKey = `allNodes ${userID}`
-   const { data, isLoading } = useQuery({
-     queryKey: [queryKey],
-     //queryKey: [Date.now().toString()],
-     queryFn: () => getAllNodes(token, desiredNodeTypes),
+  const queryKey = `allNodes ${userID}`
+  const { data, isLoading } = useQuery({
+    queryKey: [queryKey],
+    //queryKey: [Date.now().toString()],
+    queryFn: () => getAllNodes(token, desiredNodeTypes),
   });
 
   // Function to toggle component visibility
@@ -54,12 +53,12 @@ export const TenantDashboard = ({
     });
   };
 
-const [temperatureNode, co2Node, humidityNode, warmWaterNode, coldWaterNode, electricityNode] = data
-  ? Array.from(data.values())
-  : [null, null, null, null, null, null];
+  const [temperatureNode, co2Node, humidityNode, warmWaterNode, coldWaterNode, electricityNode] = data
+    ? Array.from(data.values())
+    : [null, null, null, null, null, null];
 
   return (
-    <div className="flex flex-col h-full w-full justify-center gap-8">
+    <div className="flex flex-col h-full w-full justify-center gap-4">
       <div className="absolute top-20 ml-8 ">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -80,8 +79,8 @@ const [temperatureNode, co2Node, humidityNode, warmWaterNode, coldWaterNode, ele
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="flex w-full justify-center items-center pt-6 gap-16 ">
-        {visibleComponents[0] && temperatureNode &&(
+      <div className="flex w-full h-full justify-center items-center pt-6 gap-16 ">
+        {visibleComponents[0] && temperatureNode && (
           <SensorCard
             nodeID={temperatureNode._id}
             currentValue={temperatureNode.temperature.toFixed(1)}
@@ -91,7 +90,7 @@ const [temperatureNode, co2Node, humidityNode, warmWaterNode, coldWaterNode, ele
             sensorUnit="°C"
           />
         )}
-         {visibleComponents[1] && humidityNode && (
+        {visibleComponents[1] && humidityNode && (
           <HumidityGauge
             nodeID={humidityNode._id}
             currentValue={humidityNode.humidity}
@@ -99,7 +98,7 @@ const [temperatureNode, co2Node, humidityNode, warmWaterNode, coldWaterNode, ele
             sensorType="humidity"
           />
         )}
-        {visibleComponents[2]  && co2Node && (
+        {visibleComponents[2] && co2Node && (
           <SensorCard
             nodeID={co2Node._id}
             currentValue={co2Node.co2}
@@ -122,15 +121,7 @@ const [temperatureNode, co2Node, humidityNode, warmWaterNode, coldWaterNode, ele
             ></ChartWrapper>
           </div>
         )}
-        {visibleComponents[4] && (warmWaterNode || coldWaterNode) && (
-          <div className="w-full h-full justify-center items-center my-10">
-            <ChartWrapper
-              chart="waterChart"
-              accessToken={token!}
-              chartParams={{wWater: warmWaterNode?._id, cWater: coldWaterNode?._id} as WaterChartParams}>
-            </ChartWrapper>
-          </div>
-        )}
+
       </div>
     </div>
   );
