@@ -6,6 +6,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath, revalidateTag } from "next/cache";
 import createReportApiWrapper from "./lib/esgReport";
+import { callPython } from "./lib/pythonCallHelper";
 
 export const get = async () => { };
 
@@ -520,9 +521,17 @@ export const checkReport = async (
 
   let reportBase = await api.createReportBase(newWonderfulReportBaseSpec)
   console.log("report base", reportBase)
- console.log("report ID: ", reportBase._id)
+  console.log("report ID: ", reportBase._id)
   let generatedReport = await api.generateReport(reportBase._id)
-  //console.log(generatedReport.downloadUrl)
 
-  return generatedReport.downloadUrl
+  console.log("Downloading report:", generatedReport.downloadUrl)
+  let response = await fetch(generatedReport.downloadUrl)
+  if (!response.ok) throw new Error("Failed to download report")
+  let inputData = Buffer.from(await response.arrayBuffer())
+
+  console.log("Calling Python!")
+  let responseData = await callPython("esg", inputData)
+  console.log("Data from Python:", responseData)
+
+  return responseData.toString("base64")
 }

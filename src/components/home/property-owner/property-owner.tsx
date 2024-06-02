@@ -1,17 +1,25 @@
 "use client";
 
-import { SessionData } from "@/lib/session";
 import { checkReport } from "@/actions";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+
+const xlsxType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
 export function PropertyOwner({ accessToken }: { accessToken: string }) {
   const [isLoading, setIsLoading] = useState(false);
   const handlereport = async () => {
     setIsLoading(true);
-    const url = await checkReport(accessToken)
-    window.location = url
+    const reportData = await checkReport(accessToken)
+    download(reportData)
     setIsLoading(false);
+  }
+
+  function download(base64Data: string) {
+    let link = document.createElement("a")
+    link.href = `data:${xlsxType};base64,` + base64Data
+    link.download = "ESG Report.xlsx"
+    link.click()
   }
 
   return <div className="flex w-full h-full flex-col  justify-center items-center">
