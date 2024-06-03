@@ -1,4 +1,5 @@
 import { defineConfig } from "cypress";
+import { rm } from "fs/promises";
 
 export default defineConfig({
   env: {
@@ -20,6 +21,14 @@ export default defineConfig({
       require("cypress-terminal-report/src/installLogsPrinter")(on, {
         // printLogsToConsole: "onFail",
         printLogsToConsole: "always",
+      });
+      on("task", {
+        async deleteDirectory(path) {
+          if (!path.includes("cypress"))
+            throw new Error(`Probably shouldn't delete path: ${path}`)
+          await rm(path, {recursive: true, force: true});
+          return null;  // Cypress requires returning null, not undefined.
+        }
       });
     },
   },
