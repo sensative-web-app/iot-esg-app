@@ -9,8 +9,8 @@ from statistics import mean
 import openpyxl
 
 
-def main():
-    wb = openpyxl.load_workbook(sys.argv[1])
+def main(input_file, output_file):
+    wb = openpyxl.load_workbook(input_file)
     sheet = wb["timeseriesRawData"]
 
     stuff, rstuff = extract_sheet_data(sheet)
@@ -75,7 +75,7 @@ def main():
     outsheet.append(("Humidity", min(hum_values), max(hum_values), mean(hum_values)))
     outsheet.append(("Air temperature", min(temp_values), max(temp_values), mean(temp_values)))
     outsheet.append(("CO2", min(co2_values), max(co2_values), mean(co2_values)))
-    wb.save(sys.argv[2])
+    wb.save(output_file)
 
 
 def extract_sheet_data(sheet):
@@ -156,4 +156,4 @@ def parse_ts(s):
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1], sys.argv[2])

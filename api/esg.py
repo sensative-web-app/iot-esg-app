@@ -1,11 +1,17 @@
 import sys, os
+from io import BytesIO
 from hmac import compare_digest
+from pathlib import Path
+from runpy import run_path
+
+transform_report = run_path(Path(__file__).parent / "../transform_report.py")
 
 
 def serve_request(input_stream):
-    request_body = input_stream.read()
-    print(f"Read {len(request_body)} bytes from request body.")
-    return [request_body]
+    input_buffer = BytesIO(input_stream.read())
+    output_buffer = BytesIO()
+    transform_report["main"](input_buffer, output_buffer)
+    return [output_buffer.getvalue()]
 
 
 def cli_main():
