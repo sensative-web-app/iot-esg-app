@@ -462,45 +462,79 @@ export const getNodeByContext = async (
 export const checkReport = async (
   token: string,
 ) => {
-
-  // const response = await fetch(`${process.env.NEXT_PUBLIC_YGGIO_API_URL}/reports/report-bases`, {
-  //   method: "GET",
-  //   headers: {
-  //     Authorization: `Bearer ${token}`,
-  //     "Content-Type": "application/json",
-  //   },
-  // });
+  const fs = await import("fs/promises");
+  const path = await import("path");
 
   let api = createReportApiWrapper(token)
   console.log("report bases", await api.getReportBases())
 
   const reportBaseName = "esg-report-template"
 
-  // let localTemplateFilename = "esg-report-template.xlsx"
-  // let fileData = await fs.readFile(localTemplateFilename)
-  // let uploaded = await api.uploadReportTemplate("esg-report.xlsx", fileData)
-  // console.log(uploaded)
-  // let filename = uploaded.filename;
-  let filename = "Standard-Connectivity";
+  // The path must be resolved for Vercel to find it.
+  let localTemplateFilename = path.resolve("esg-report-template.xlsx")
+  console.log("Template filename:", localTemplateFilename)
 
-  const newWonderfulReportBaseSpec = {
+  let fileData = await fs.readFile(localTemplateFilename)
+  let uploaded = await api.uploadReportTemplate("esg-report.xlsx", fileData)
+  console.log("Uploaded template:", uploaded)
+
+  let reportBaseSpec = {
     "name": reportBaseName,
-    "description": "Trying some stuff!", // Beskrivning
-    "fileName": filename, // Detta är namnet på filen som är bifogad i detta slack meddelande
-    "secondsBetweenPoints": 0, // Hur många sekunder mellan varje tidsserie punkt från varje iotnod, (I detta fall 0 sekunder som betyder _alla_ tidsseriepunkter för varje vald nod)
-    "sources": [  // Sources, en lista av olika filtreringar för hur och vad du vill hämta från våra databaser
+    "description": "ESG Report",
+    "fileName": uploaded.filename,
+    "secondsBetweenPoints": 0,
+    "sources": [
       {
-        "valueFunction": "mean", // en funktion riktad till våran tidsserie databas, `mean` värde för varje tidsseriepunkt i databasen
-        "query": "electricityConsumption", // ett query på vilka noder du vill hämta från ditt konto (i detta fallet hämtar vi alla noder som har fältet `rssi`.) (Det är detta queryt som fyller upp `iotnodeRawData` arket)
-        "fields": [ // Fields, en lista på fältnamn som du vill hämta från tiddserien. Här bestäms alltså vilka tidsseriefält du vill hämta, medans `query` hämtar alla fält, men bara det senaste värdena
+        "valueFunction": "mean",
+        "query": "contextMap.LNU_type_co2",
+        "fields": [
           {
-            "name": "electricityConsumption", // namnet på fältet du vill hämta ( i detta fall rssi )
-            "prettyName": "electricity Consumption", // Prettyname är till för hur det ska se ut i vårat UI eller excel arken ( här kan stå vad som helst )
-            "dataType": "float" // dataType, vilken datatyp är det på fältet, just nu har vi bara stöd för "float"
-          },
-          { // Samma gäller för snr, vill man lägga till fler går det bra också.
-            "name": "snr",
-            "prettyName": "SNR",
+            "name": "co2",
+            "prettyName": "CO2",
+            "dataType": "float"
+          }
+        ]
+      },
+      {
+        "valueFunction": "mean",
+        "query": "contextMap.LNU_type_temperature",
+        "fields": [
+          {
+            "name": "temperature",
+            "prettyName": "Air temperature",
+            "dataType": "float"
+          }
+        ]
+      },
+      {
+        "valueFunction": "mean",
+        "query": "contextMap.LNU_type_humidity",
+        "fields": [
+          {
+            "name": "humidity",
+            "prettyName": "Humidity",
+            "dataType": "float"
+          }
+        ]
+      },
+      {
+        "valueFunction": "mean",
+        "query": "electricityConsumption",
+        "fields": [
+          {
+            "name": "electricityConsumption",
+            "prettyName": "Electricity consumption",
+            "dataType": "float"
+          }
+        ]
+      },
+      {
+        "valueFunction": "mean",
+        "query": "contextMap.water",
+        "fields": [
+          {
+            "name": "currentVolume",
+            "prettyName": "Volume!",
             "dataType": "float"
           }
         ]
@@ -519,7 +553,7 @@ export const checkReport = async (
     console.log(await api.deleteReportBase(id))
   }
 
-  let reportBase = await api.createReportBase(newWonderfulReportBaseSpec)
+  let reportBase = await api.createReportBase(reportBaseSpec)
   console.log("report base", reportBase)
   console.log("report ID: ", reportBase._id)
   let generatedReport = await api.generateReport(reportBase._id)

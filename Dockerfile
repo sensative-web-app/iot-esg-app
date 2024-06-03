@@ -28,6 +28,7 @@ RUN mkdir -p /home/node/app/.next /home/node/app/api
 WORKDIR /home/node/app
 COPY api/*.py api/
 COPY *.py .
+COPY *.xlsx .
 COPY --from=builder --chown=node:node /build/.next/standalone ./
 COPY --from=builder --chown=node:node /build/.next/static ./.next/static
 EXPOSE ${PORT}
