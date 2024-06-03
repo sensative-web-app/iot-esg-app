@@ -59,6 +59,14 @@ async function callSubprocess(
     }
     let proc = spawn("python3", execArgs, options)
 
+    let finished = new Promise((resolve, reject) => {
+      proc.on("exit", status => {
+        if (status === 0) resolve(status)
+        else reject(`Exit status ${status}`)
+      })
+      proc.on("error", err => reject(err))
+    })
+
     let inputBlob = new Blob([inputData])
     let inputStream = Readable.fromWeb(inputBlob.stream() as any)
     inputStream.pipe(proc.stdin)
@@ -67,5 +75,7 @@ async function callSubprocess(
     for await (let chunk of proc.stdout) {
       outputChunks.push(chunk)
     }
+
+    await finished
     return Buffer.concat(outputChunks)
 }

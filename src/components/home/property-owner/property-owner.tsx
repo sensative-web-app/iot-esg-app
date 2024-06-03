@@ -10,9 +10,13 @@ export function PropertyOwner({ accessToken }: { accessToken: string }) {
   const [isLoading, setIsLoading] = useState(false);
   const handlereport = async () => {
     setIsLoading(true);
-    const reportData = await checkReport(accessToken)
-    download(reportData)
-    setIsLoading(false);
+    try {
+      const reportData = await checkReport(accessToken)
+      download(reportData)
+    }
+    finally {
+      setIsLoading(false);
+    }
   }
 
   function download(base64Data: string) {
